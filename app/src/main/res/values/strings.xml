@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TravAppUpd</string>
+    <string name="heading_main">Мои путешествия</string>
+    <string name="stats">Моя статистика</string>
+    <string name="country_stat">Стран</string>
+    <string name="visited_stat">посещено</string>
+    <string name="place_stat">Мест</string>
+    <string name="trips_stat">Поездок</string>
+    <string name="total_stat">всего</string>
+</resources>
