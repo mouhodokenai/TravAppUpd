@@ -1,0 +1,27 @@
+package com.example.travappupd.data.dao
+
+import androidx.room.*
+import com.example.travappupd.data.entities.Ticket
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface TicketDao {
+    @Insert
+    suspend fun insert(ticket: Ticket): Long
+
+    @Update
+    suspend fun update(ticket: Ticket): Unit
+
+    @Delete
+    suspend fun delete(ticket: Ticket): Unit
+
+    @Query("SELECT * FROM tickets WHERE trip_id = :tripId")
+    fun getByTripId(tripId: Long): Flow<List<Ticket>>
+
+    @Query("DELETE FROM tickets")
+    suspend fun deleteAllTickets(): Unit
+}
+
+
+
+

@@ -7,4 +7,10 @@
     <string name="place_stat">Мест</string>
     <string name="trips_stat">Поездок</string>
     <string name="total_stat">всего</string>
+    <string name="new_trip">Новое путешествие</string>
+    <string name="add_trip">Добавить поездку</string>
+    <string name="plans_main">Мои планы</string>
+    <string name="archive_main">Мой архив</string>
+    <string name="past">Посмотреть прошлые путешествия</string>
+    <string name="future">Посмотреть предстоящие путешествия</string>
 </resources>

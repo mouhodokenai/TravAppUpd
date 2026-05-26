@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,10 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,24 +36,26 @@ import androidx.compose.ui.unit.sp
 import com.example.travappupd.ui.theme.TravelAppTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.travappupd.R
+import com.example.travappupd.navigation.TripNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TravelAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    TripNavigation()
                 }
             }
         }
     }
-}
+
 
 @Composable
-fun MainScreen(modifier: Modifier) {
+fun MainScreen(
+    onNavigateToNewTrip: () -> Unit,
+    onNavigateToTrips: (String) -> Unit
+)
+{
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -117,7 +118,6 @@ fun MainScreen(modifier: Modifier) {
                 .background(Color(0xFFF7F8FC)),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-
             item {
 
                 Box(
@@ -193,7 +193,8 @@ fun MainScreen(modifier: Modifier) {
                         number = "28",
                         title = stringResource(R.string.country_stat),
                         subtitle = stringResource(R.string.visited_stat),
-                        color = Color(0xFF5B8DEF)
+                        color = Color(0xFFEF9F98),
+                        containerColor = Color(0x16EF9F98)
                     )
 
                     StatisticCard(
@@ -202,7 +203,8 @@ fun MainScreen(modifier: Modifier) {
                         number = "132",
                         title = stringResource(R.string.place_stat),
                         subtitle = stringResource(R.string.visited_stat),
-                        color = Color(0xFF45C4A1)
+                        color = Color(0xFF45C4A1),
+                        containerColor = Color(0x1445C4A1)
                     )
 
                     StatisticCard(
@@ -211,7 +213,8 @@ fun MainScreen(modifier: Modifier) {
                         number = "47",
                         title = stringResource(R.string.trips_stat),
                         subtitle = stringResource(R.string.total_stat),
-                        color = Color(0xFF9B6BFF)
+                        color = Color(0xFF9B6BFF),
+                        containerColor = Color(0x169B6BFF)
                     )
                 }
 
@@ -221,26 +224,29 @@ fun MainScreen(modifier: Modifier) {
             item {
 
                 MainActionCard(
-                    title = "Новое путешествие",
-                    subtitle = "Добавить поездку",
+                    title = stringResource(R.string.new_trip),
+                    subtitle = stringResource(R.string.add_trip),
                     icon = Icons.Outlined.Add,
-                    background = Color(0xFFA1B2F6)
+                    background = Color(0xFFA1B2F6),
+                    onClick = onNavigateToNewTrip
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SecondaryCard(
-                    title = "Архив поездок",
-                    subtitle = "Посмотреть прошлые путешествия",
-                    icon = Icons.Outlined.Clear
+                    title = stringResource(R.string.plans_main),
+                    subtitle = stringResource(R.string.future),
+                    icon = Icons.Outlined.Clear,
+                    onClick = { onNavigateToTrips("plan") }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SecondaryCard(
-                    title = "Предстоящие поездки",
-                    subtitle = "Ваши планы и бронирования",
-                    icon = Icons.Outlined.Clear
+                    title = stringResource(R.string.archive_main),
+                    subtitle = stringResource(R.string.past),
+                    icon = Icons.Outlined.Clear,
+                    onClick = { onNavigateToTrips("archive") }
                 )
             }
         }
@@ -254,14 +260,15 @@ fun MainScreen(modifier: Modifier) {
         number: String,
         title: String,
         subtitle: String,
-        color: Color
+        color: Color,
+        containerColor: Color
     ) {
 
         Card(
             modifier = modifier.height(160.dp),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = containerColor
             )
         ) {
 
@@ -318,12 +325,14 @@ fun MainScreen(modifier: Modifier) {
         title: String,
         subtitle: String,
         icon: ImageVector,
-        background: Color
+        background: Color,
+        onClick: () -> Unit
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .clickable { onClick() },
             shape = RoundedCornerShape(28.dp),
         ) {
 
@@ -384,13 +393,15 @@ fun MainScreen(modifier: Modifier) {
 fun SecondaryCard(
     title: String,
     subtitle: String,
-    icon: ImageVector
+    icon: ImageVector,
+    onClick: () -> Unit
 ) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xB4A0B1F4)
@@ -452,10 +463,6 @@ fun SecondaryCard(
 @Composable
 fun MainScreenPreview() {
     TravelAppTheme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            MainScreen(
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
+
     }
 }
