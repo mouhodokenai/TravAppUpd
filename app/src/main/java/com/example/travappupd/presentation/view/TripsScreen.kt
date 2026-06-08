@@ -57,13 +57,7 @@ fun TripsScreen(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            /*
-                            navController.popBackStack(
-                             */
-                        }
-                    ) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Назад"
@@ -71,7 +65,6 @@ fun TripsScreen(
                     }
                 },
                 actions = {
-
                     IconButton(onClick = { /* поиск */ }) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
@@ -98,33 +91,18 @@ fun TripsScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .background(Color(0xFFF7F8FC)),
-            contentPadding = PaddingValues(bottom = 24.dp)
+            contentPadding = PaddingValues(
+                horizontal = 20.dp,
+                vertical = 8.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
 
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .height(80.dp)
-                ) {
-                    Text(
-                        text = "Мои поездки",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF4A5063)
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Здесь все ваши сохраненные путешествия",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xA9464D62)
-                    )
-
-                }
+                HeaderSection(
+                    "Мои поездки",
+                    "Здесь ваши сохраненные путешествия"
+                )
             }
 
             item  {
@@ -157,8 +135,7 @@ fun TripCard(
         ),
         modifier = modifier
             .height(100.dp)
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(15.dp)
     ) {
         Row(
@@ -236,11 +213,48 @@ fun TripCard(
         }
     }
 }
-
-@Preview(showSystemUi = true)
 @Composable
-fun NewTripScreenPreview() {
-    TravelAppTheme {
+fun HeaderSection(
+    title: String,
+    text: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+    ) {
+        Text(
+            text = title,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF46465E)
+        )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = text,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xA9464D62)
+        )
+
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun PreviewTripsScreen() {
+    TravelAppTheme() {
+        TripsScreen(
+            onNavigateToDetails = { tripId, tripName ->
+            },
+            onNavigateBack = {
+            },
+            type = "preview"
+        )
     }
 }

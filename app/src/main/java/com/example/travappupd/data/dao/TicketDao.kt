@@ -10,16 +10,16 @@ interface TicketDao {
     suspend fun insert(ticket: Ticket): Long
 
     @Update
-    suspend fun update(ticket: Ticket): Unit
+    suspend fun update(ticket: Ticket)
 
     @Delete
-    suspend fun delete(ticket: Ticket): Unit
+    suspend fun delete(ticket: Ticket)
 
     @Query("SELECT * FROM tickets WHERE trip_id = :tripId")
     fun getByTripId(tripId: Long): Flow<List<Ticket>>
 
     @Query("DELETE FROM tickets")
-    suspend fun deleteAllTickets(): Unit
+    suspend fun deleteAllTickets()
 }
 
 

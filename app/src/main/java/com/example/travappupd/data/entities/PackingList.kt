@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey
             entity = Trip::class,
             parentColumns = ["trip_id"],
             childColumns = ["trip_id"],
-            onDelete = ForeignKey.Companion.CASCADE
+            onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [Index(value = ["trip_id"])]

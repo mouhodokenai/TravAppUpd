@@ -4,17 +4,19 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
+
 android {
     namespace = "com.example.travappupd"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.travappupd"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }
@@ -59,10 +61,11 @@ dependencies {
     // Room
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     debugImplementation(libs.androidx.ui.tooling)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.common)
 
     // ViewModel & LiveData
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -75,7 +78,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.room.common)
 
     // Testing
     testImplementation(libs.junit)

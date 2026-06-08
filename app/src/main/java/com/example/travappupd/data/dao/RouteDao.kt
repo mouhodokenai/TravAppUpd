@@ -11,10 +11,10 @@ interface RouteDao {
     suspend fun insert(route: Route) : Long
 
     @Update
-    suspend fun update(route: Route): Unit
+    suspend fun update(route: Route)
 
     @Delete
-    suspend fun delete(route: Route): Unit
+    suspend fun delete(route: Route)
 
     @Query("SELECT * FROM route")
     fun getAllRoutes(): Flow<List<Route>>
@@ -23,7 +23,7 @@ interface RouteDao {
     fun getByTripId(tripId: Long): Flow<List<Route>>
 
     @Query("DELETE FROM route WHERE trip_id = :tripId")
-    suspend fun clearAllRoutesForTrip(tripId: Long): Unit
+    suspend fun clearAllRoutesForTrip(tripId: Long)
 
     /*
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -31,7 +31,7 @@ interface RouteDao {
      */
 
     @Query("DELETE FROM route")
-    suspend fun deleteAllRoutes(): Unit
+    suspend fun deleteAllRoutes()
 }
 
 

@@ -26,7 +26,7 @@ fun TripNavigation() {
 
         composable("newTrip") {
             NewTripScreen(
-                //TODO
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

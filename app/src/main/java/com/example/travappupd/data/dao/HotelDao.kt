@@ -10,15 +10,15 @@ interface HotelDao {
     suspend fun insert(hotel: Hotel) : Long
 
     @Update
-    suspend fun update(hotel: Hotel): Unit
+    suspend fun update(hotel: Hotel)
 
     @Delete
-    suspend fun delete(hotel: Hotel): Unit
+    suspend fun delete(hotel: Hotel)
 
     @Query("SELECT * FROM hotel WHERE trip_id = :tripId")
     fun getHotelsForTrip(tripId: Long): Flow<List<Hotel>>
 
     @Query("DELETE FROM hotel")
-    suspend fun deleteAllHotels(): Unit
+    suspend fun deleteAllHotels()
 }
 

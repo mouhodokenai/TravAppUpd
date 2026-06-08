@@ -44,6 +44,7 @@ abstract class TravDatabase : RoomDatabase() {
     abstract fun tripDao(): TripDao
 
     companion object {
+        @Volatile
         private var INSTANCE: TravDatabase? = null
 
         fun getInstance(context: Context): TravDatabase {

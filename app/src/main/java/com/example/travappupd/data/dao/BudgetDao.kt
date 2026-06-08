@@ -11,16 +11,16 @@ interface BudgetDao {
     suspend fun insert(budget: Budget) : Long
 
     @Update
-    suspend fun update(budget: Budget): Unit
+    suspend fun update(budget: Budget)
 
     @Delete
-    suspend fun delete(budget: Budget): Unit
+    suspend fun delete(budget: Budget)
 
     @Query("SELECT * FROM budget WHERE trip_id = :tripId")
     fun getByTripId(tripId: Long): Flow<List<Budget>>
 
     @Query("DELETE FROM budget")
-    suspend fun deleteAllBudgets(): Unit
+    suspend fun deleteAllBudgets()
 }
 
 

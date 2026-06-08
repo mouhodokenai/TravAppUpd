@@ -10,10 +10,10 @@ interface PackingListDao {
     suspend fun insert(item: PackingList) : Long
 
     @Update
-    suspend fun update(item: PackingList): Unit
+    suspend fun update(item: PackingList)
 
     @Delete
-    suspend fun delete(item: PackingList): Unit
+    suspend fun delete(item: PackingList)
 
     @Query("SELECT * FROM packing_list")
     fun getAll(): Flow<List<PackingList>>
@@ -22,7 +22,7 @@ interface PackingListDao {
     fun getByTripId(tripId: Long): Flow<List<PackingList>>
 
     @Query("DELETE FROM trip")
-    suspend fun deleteAllPackingItems(): Unit
+    suspend fun deleteAllPackingItems()
 }
 
 

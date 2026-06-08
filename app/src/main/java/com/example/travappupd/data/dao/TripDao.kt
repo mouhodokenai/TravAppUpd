@@ -14,10 +14,10 @@ interface TripDao {
     fun insert(trip: Trip): Long
 
     @Update
-    fun update(trip: Trip): Unit
+    fun update(trip: Trip)
 
     @Delete
-    fun delete(trip: Trip): Unit
+    fun delete(trip: Trip)
 
 
     @Query("SELECT * FROM trip")
@@ -27,7 +27,7 @@ interface TripDao {
     fun getByTripId(tripId: Long): Flow<Trip?>
 
     @Query("DELETE FROM trip")
-    fun deleteAllTrips(): Unit
+    fun deleteAllTrips()
 
 
 }
