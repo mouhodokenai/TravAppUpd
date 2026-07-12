@@ -18,8 +18,8 @@ import androidx.room.PrimaryKey
     indices = [Index(value = ["trip_id"])]
 )
 data class Ticket(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "ticket_id") val ticketId: Int = 0,
+    @PrimaryKey
+    @ColumnInfo(name = "ticket_id") val ticketId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
     @ColumnInfo(name = "transport_type") val transportType: String,
     @ColumnInfo(name = "departure_city") val departureCity: String,
@@ -29,4 +29,15 @@ data class Ticket(
     @ColumnInfo(name = "departure_date") val departureDate: String,
     @ColumnInfo(name = "arrival_date") val arrivalDate: String,
     @ColumnInfo(name = "ticket_number") val ticketNumber: String
+)
+
+data class TicketDraft(
+    val transportType: String,
+    val departureCity: String,
+    val arrivalCity: String,
+    val departureTime: String,
+    val arrivalTime: String,
+    val departureDate: String,
+    val arrivalDate: String,
+    val ticketNumber: String
 )

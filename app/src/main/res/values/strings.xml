@@ -13,4 +13,9 @@
     <string name="archive_main">Мой архив</string>
     <string name="past">Посмотреть прошлые путешествия</string>
     <string name="future">Посмотреть предстоящие путешествия</string>
+    <string name="plans">Мои планы</string>
+    <string name="plans_subtitle">Здесь ваши предстоящие путешествия</string>
+    <string name="archive">Мой архив</string>
+    <string name="archive_subtitle">Здесь ваши прошлые путешествия</string>
+
 </resources>

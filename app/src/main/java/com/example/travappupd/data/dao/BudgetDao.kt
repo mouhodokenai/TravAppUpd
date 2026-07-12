@@ -7,8 +7,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BudgetDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(budget: Budget) : Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(budgets: List<Budget>)
 
     @Update
     suspend fun update(budget: Budget)
@@ -21,6 +24,7 @@ interface BudgetDao {
 
     @Query("DELETE FROM budget")
     suspend fun deleteAllBudgets()
+
 }
 
 

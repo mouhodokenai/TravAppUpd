@@ -1,6 +1,7 @@
 package com.example.travappupd.data.database
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -31,8 +32,7 @@ import com.example.travappupd.data.entities.Trip
         Trip::class
     ],
     version = 1,
-    exportSchema = false
-)
+    exportSchema = true)
 abstract class TravDatabase : RoomDatabase() {
 
     abstract fun budgetDao(): BudgetDao

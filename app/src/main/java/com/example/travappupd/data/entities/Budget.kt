@@ -15,11 +15,16 @@ import androidx.room.*
 )
 
 data class Budget(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "budget_id") val budgetId: Int = 0,
+    @PrimaryKey
+    @ColumnInfo(name = "budget_id") val budgetId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
     val category: String,
     val amount: Double,
     val currency: String
 )
 
+data class BudgetDraft(
+    val category: String,
+    val amount: Double,
+    val currency: String
+)

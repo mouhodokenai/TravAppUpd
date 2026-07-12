@@ -1,13 +1,17 @@
 package com.example.travappupd.data.dao
 
 import androidx.room.*
+import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.Hotel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HotelDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(hotel: Hotel) : Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(hotels: List<Hotel>)
 
     @Update
     suspend fun update(hotel: Hotel)

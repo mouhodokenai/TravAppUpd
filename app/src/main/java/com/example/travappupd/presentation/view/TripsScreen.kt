@@ -1,6 +1,7 @@
 package com.example.travappupd.presentation.view
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,18 +33,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.example.travappupd.R
+import com.example.travappupd.presentation.viewmodel.PreviewTripsViewModel
+import com.example.travappupd.presentation.viewmodel.TripViewModel
+import com.example.travappupd.presentation.viewmodel.TripsViewModel
 import com.example.travappupd.ui.theme.TravelAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,8 +61,12 @@ import com.example.travappupd.ui.theme.TravelAppTheme
 fun TripsScreen(
     onNavigateToDetails: (tripId: Long, tripName: String) -> Unit,
     onNavigateBack: () -> Unit,
-    type: String
+    type: String,
+    viewModel: TripsViewModel = hiltViewModel()
 ) {
+
+    val trips by viewModel.trips.collectAsState(initial = emptyList())
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -99,21 +113,30 @@ fun TripsScreen(
         ) {
 
             item {
-                HeaderSection(
-                    "Мои поездки",
-                    "Здесь ваши сохраненные путешествия"
-                )
+                if (type == "plan") {
+                    HeaderSection(
+                        stringResource(R.string.plans),
+                        stringResource(R.string.plans_subtitle)
+                    )
+                } else {
+                    HeaderSection(
+                        stringResource(R.string.archive),
+                        stringResource(R.string.archive_subtitle)
+                    )
+                }
+
             }
 
-            item  {
-                TripCard(
-                    photo = painterResource(R.drawable.trip),
-                    title = "Country",
-                    date = "dd month - dd month yyyy",
-                    places = "place"
-                )
+            for (trip in trips) {
+                item {
+                    TripCard(
+                        photo = painterResource(R.drawable.trip),
+                        title = trip.title,
+                        date = "${trip.startDate.toString()} - ${trip.endDate.toString()}",
+                        places = "place"
+                    )
+                }
             }
-
         }
     }
 }
@@ -249,12 +272,14 @@ fun HeaderSection(
 @Composable
 fun PreviewTripsScreen() {
     TravelAppTheme() {
+        val mockViewModel = remember { PreviewTripsViewModel() }
         TripsScreen(
             onNavigateToDetails = { tripId, tripName ->
             },
             onNavigateBack = {
             },
-            type = "preview"
+            type = "preview",
+            viewModel = mockViewModel
         )
     }
 }

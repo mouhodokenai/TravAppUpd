@@ -19,8 +19,8 @@ import androidx.room.PrimaryKey
 )
 
 data class Hotel(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "hotel_id") val hotelId: Int = 0,
+    @PrimaryKey
+    @ColumnInfo(name = "hotel_id") val hotelId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
     val name: String,
     val address: String,
@@ -29,3 +29,13 @@ data class Hotel(
     @ColumnInfo(name = "check_in_time") val checkInTime: String,
     @ColumnInfo(name = "check_out_time") val checkOutTime: String
 )
+
+class HotelDraft(
+    val name: String,
+    val address: String,
+    val checkInDate: String,
+    val checkOutDate: String,
+    val checkInTime: String,
+    val checkOutTime: String
+)
+

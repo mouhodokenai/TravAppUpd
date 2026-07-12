@@ -37,7 +37,9 @@ import com.example.travappupd.ui.theme.TravelAppTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.travappupd.R
 import com.example.travappupd.navigation.TripNavigation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -463,6 +465,9 @@ fun SecondaryCard(
 @Composable
 fun MainScreenPreview() {
     TravelAppTheme {
-
+        MainScreen(
+            onNavigateToNewTrip = { },
+            onNavigateToTrips = { }
+        )
     }
 }

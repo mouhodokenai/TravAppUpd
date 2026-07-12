@@ -1,12 +1,18 @@
 package com.example.travappupd.presentation.view
 
 import android.annotation.SuppressLint
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.*
@@ -14,29 +20,84 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.travappupd.R
+import com.example.travappupd.presentation.viewmodel.PreviewTripViewModel
 import com.example.travappupd.presentation.viewmodel.TripViewModel
+import com.example.travappupd.ui.theme.TravelAppTheme
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTripScreen(
     onNavigateBack: () -> Unit,
-    viewModel: TripViewModel = viewModel()
+    onNavigateToTrips: (String) -> Unit,
+    onNavigateToBudget: (Long) -> Unit,
+    onNavigateToHotel: (Long) -> Unit,
+    onNavigateToNote: (Long) -> Unit,
+    onNavigateToPackingList: (Long) -> Unit,
+    onNavigateToRoute: (Long) -> Unit,
+    onNavigateToTicket: (Long) -> Unit,
+    viewModel: TripViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
 
     val tripName by viewModel.tripName.collectAsState()
     val startDate by viewModel.startDate.collectAsState()
     val endDate by viewModel.endDate.collectAsState()
+
+    val startDateString = formatLocalDate(startDate)
+    val endDateString = formatLocalDate(endDate)
+
+    val tripId = viewModel.tripId
+
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val budgetItems by viewModel.budgetRepository.getItemsByTripId(viewModel.tripId)
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    val hotelItems by viewModel.hotelRepository.getItemsByTripId(viewModel.tripId)
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    val noteItems by viewModel.noteRepository.getItemsByTripId(viewModel.tripId)
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    val packingItems by viewModel.packingListRepository.getItemsByTripId(viewModel.tripId)
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    val routeItems by viewModel.routeRepository.getItemsByTripId(viewModel.tripId)
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    val ticketItems by viewModel.ticketRepository.getItemsByTripId(viewModel.tripId)
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+
+    val categories = listOf(
+        budgetItems, hotelItems, noteItems, packingItems, routeItems, ticketItems
+    ).count { it.isNotEmpty() }
 
     Scaffold(
         topBar = {
@@ -60,13 +121,21 @@ fun NewTripScreen(
                 }
             )
         }
-        /*
+
         ,
         bottomBar = {
-            BottomCreateButton()
+            BottomCreateButton(
+                onSave = {
+                    if (ChronoUnit.DAYS.between(startDate, endDate) > 0) {
+                        viewModel.saveTrip()
+                        onNavigateToTrips("plan")
+                    }
+                    else Toast.makeText(context, "Ошибка при выборе даты", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
 
-         */
+
     ) { padding ->
 
         LazyColumn(
@@ -89,11 +158,31 @@ fun NewTripScreen(
             }
 
             item {
-                TripPreviewCard()
+                TripPreviewCard(
+                    tripName = tripName,
+                    startDate = startDate,
+                    endDate = endDate,
+                    isExpanded = isExpanded,
+                    categories = categories,
+                    onToggleExpanded = { isExpanded = !isExpanded }
+                )
             }
 
             item {
-                TripInfoSection()
+                TripInfoSection(
+                    tripName = tripName,
+                    startDate = startDateString,
+                    endDate = endDateString,
+                    onTripNameChange = { viewModel.updateTripName(it) },
+                    onStartDateChange = { dateString ->
+                        viewModel.updateStartDate(dateString)
+                    },
+
+                    onEndDateChange = { dateString ->
+                        viewModel.updateEndDate(dateString)
+                    },
+                    isExpanded = isExpanded
+                )
             }
 
             item {
@@ -111,45 +200,51 @@ fun NewTripScreen(
                 ) {
 
                     CategoryCard(
-                        icon = Icons.Outlined.Clear,
+                        icon = painterResource(R.drawable.luggage2),
                         title = "Багаж",
-                        subtitle = "3 вещи добавлено",
-                        color = Color(0xFF5B8DEF)
+                        subtitle = " ",
+                        color = Color(0xFF5B8DEF),
+                        onAdd = { onNavigateToPackingList(tripId) }
                     )
 
                     CategoryCard(
-                        icon = Icons.Outlined.Clear,
+                        icon = painterResource(R.drawable.wallet),
                         title = "Бюджет",
-                        subtitle = "1 200 €",
-                        color = Color(0xFF2DBE7F)
+                        subtitle = " ",
+                        color = Color(0xFF2DBE7F),
+                        onAdd = { onNavigateToBudget(tripId) }
                     )
 
                     CategoryCard(
-                        icon = Icons.Outlined.Clear,
+                        icon = painterResource(R.drawable.note),
                         title = "Заметки",
-                        subtitle = "2 заметки",
-                        color = Color(0xFFFFB648)
+                        subtitle = " ",
+                        color = Color(0xFFFFB648),
+                        onAdd = { onNavigateToNote(tripId) }
                     )
 
                     CategoryCard(
-                        icon = Icons.Outlined.Clear,
+                        icon = painterResource(R.drawable.ticket),
                         title = "Билеты",
-                        subtitle = "2 билета",
-                        color = Color(0xFF8D63FF)
+                        subtitle = " ",
+                        color = Color(0xFF8D63FF),
+                        onAdd = { onNavigateToTicket(tripId) }
                     )
 
                     CategoryCard(
-                        icon = Icons.Outlined.Clear,
+                        icon = painterResource(R.drawable.hotel),
                         title = "Отели",
-                        subtitle = "1 бронь",
-                        color = Color(0xFFFF725E)
+                        subtitle = " ",
+                        color = Color(0xFFFF725E),
+                        onAdd = { onNavigateToHotel(tripId) }
                     )
 
                     CategoryCard(
-                        icon = Icons.Outlined.LocationOn,
+                        icon = painterResource(R.drawable.location2),
                         title = "Маршрут мест",
-                        subtitle = "14 мест",
-                        color = Color(0xFF62B44B)
+                        subtitle = " ",
+                        color = Color(0xFF62B44B),
+                        onAdd = { onNavigateToRoute(tripId) }
                     )
 
                     Spacer(modifier = Modifier.height(100.dp))
@@ -159,9 +254,36 @@ fun NewTripScreen(
     }
 }
 
+private fun parseToLocalDate(dateString: String): LocalDate? {
+    return try {
+        val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("ru"))
+        LocalDate.parse(dateString, formatter)
+    } catch (e: Exception) {
+        null
+    }
+}
+
+private fun formatLocalDate(date: LocalDate?): String {
+    return date?.let {
+        val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("ru"))
+        it.format(formatter)
+    } ?: "выбрать"
+}
 
 @Composable
-private fun TripPreviewCard() {
+private fun TripPreviewCard(
+    tripName: String,
+    startDate: LocalDate?,
+    endDate: LocalDate?,
+    isExpanded: Boolean,
+    categories: Int,
+    onToggleExpanded: () -> Unit
+) {
+
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (isExpanded) 180f else 0f,
+        label = "rotation"
+    )
 
     Card(
         shape = RoundedCornerShape(28.dp),
@@ -171,7 +293,10 @@ private fun TripPreviewCard() {
     ) {
 
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(
+                horizontal = 20.dp,
+                vertical = 12.dp
+            )
         ) {
 
             Row(
@@ -186,9 +311,10 @@ private fun TripPreviewCard() {
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column {
+                    Spacer(modifier = Modifier.height(5.dp))
 
                     Text(
-                        text = "",
+                        text = tripName,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp
                     )
@@ -196,7 +322,12 @@ private fun TripPreviewCard() {
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "12–20 мая • 8 дней",
+                        text =
+                            if (startDate != null && endDate != null)
+                                if (ChronoUnit.DAYS.between(startDate, endDate) > 0)
+                                "${ChronoUnit.DAYS.between(startDate, endDate)} дней"
+                                else "ошибка при выборе даты"
+                        else "0 дней",
                         color = Color.Gray
                     )
                 }
@@ -205,7 +336,7 @@ private fun TripPreviewCard() {
             Spacer(modifier = Modifier.height(18.dp))
 
             LinearProgressIndicator(
-                progress = { 0.35f },
+                progress = { 0.17f * categories },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
@@ -220,139 +351,271 @@ private fun TripPreviewCard() {
             ) {
 
                 Text(
-                    text = "2 из 6 разделов",
+                    text = "$categories из 6 разделов",
                     color = Color.Gray
                 )
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Icon(
+                imageVector = Icons.Outlined.KeyboardArrowDown,
+                contentDescription = null,
+                tint = Color.Gray,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable { onToggleExpanded() }
+                    .rotate(rotationAngle)
+            )
         }
     }
 }
 
 @Composable
-private fun TripInfoSection( //тут остановились
-    // Данные
+private fun TripInfoSection(
     tripName: String,
     startDate: String,
     endDate: String,
-    // Колбэки для изменений
     onTripNameChange: (String) -> Unit,
-    onStartDateChange: (String) -> Unit,
-    onEndDateChange: (String) -> Unit,
-    onSave: () -> Unit
+    onStartDateChange: (LocalDate) -> Unit,
+    onEndDateChange: (LocalDate) -> Unit,
+    isExpanded: Boolean
 ) {
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
-        OutlinedCard(
-            shape = RoundedCornerShape(24.dp)
+    AnimatedVisibility(
+        //visible = true
+        visible = isExpanded
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = null
+            OutlinedCard(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
                 )
+            ) {
+                Row(
+                    modifier = Modifier.padding(
+                        horizontal = 20.dp,
+                        vertical = 16.dp
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column {
-
-                    Text(
-                        text = "Название поездки",
-                        color = Color.Gray
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null
                     )
 
-                    Text(
-                        text = "Путешествие в Италию",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+
+                        Text(
+                            text = "Название поездки",
+                            color = Color.Gray,
+                            fontSize = 13.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        BasicTextField(
+                            value = tripName,
+                            onValueChange = onTripNameChange,
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            textStyle = TextStyle(
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                }
+                            ),
+                            cursorBrush = SolidColor(
+                                MaterialTheme.colorScheme.primary
+                            ),
+                            decorationBox = { innerTextField ->
+
+                                Box(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+
+                                    if (tripName.isBlank()) {
+                                        Text(
+                                            text = "Введите название",
+                                            color = Color(0xA9464D62),
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+
+                                    innerTextField()
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+
+            OutlinedCard(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    EditableDateBlock(
+                        title = "Дата начала",
+                        date = startDate,
+                        onDateClick = onStartDateChange,
+                        placeholder = "выбрать"
+                    )
+
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowForward,
+                        contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+
+                    EditableDateBlock(
+                        title = "Дата окончания",
+                        date = endDate.toString(),
+                        onDateClick = onEndDateChange,
+                        placeholder = "выбрать"
                     )
                 }
             }
         }
-
-        OutlinedCard(
-            shape = RoundedCornerShape(24.dp)
-        ) {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                DateBlock(
-                    title = "Дата начала",
-                    date = "12 мая 2024"
-                )
-
-                Icon(
-                    imageVector = Icons.Outlined.ArrowForward,
-                    contentDescription = null
-                )
-
-                DateBlock(
-                    title = "Дата окончания",
-                    date = "20 мая 2024"
-                )
-            }
-        }
     }
 }
 
 @Composable
-private fun DateBlock(
+private fun EditableDateBlock(
     title: String,
-    date: String
+    date: String,
+    onDateClick: (LocalDate) -> Unit,
+    placeholder: String = "выбрать"
 ) {
+    var showDatePicker by remember { mutableStateOf(false) }
 
-    Column {
-
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
             text = title,
-            color = Color.Gray
+            color = Color.Gray,
+            fontSize = 14.sp
         )
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        Text(
-            text = date,
-            fontWeight = FontWeight.Bold
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { showDatePicker = true }
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Text(
+                text = date.ifEmpty { placeholder },
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = if (date == placeholder) Color(0xA9464D62) else Color(0xFF46465E)
+            )
+        }
+    }
+
+    if (showDatePicker) {
+        DatePickerModal(
+            onDateSelected = { selectedDate ->
+                onDateClick(selectedDate)
+                showDatePicker = false
+            },
+            onDismiss = { showDatePicker = false }
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    onDateSelected: (LocalDate) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        val formatter = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
+        formatter.format(Date(it))
+    } ?: ""
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        val localDate = Instant.ofEpochMilli(millis)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate()
+                        onDateSelected(localDate)
+                    }
+                    onDismiss()
+                }
+            ) {
+                Text("Выбрать")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+
 @Composable
 private fun CategoryCard(
-    icon: ImageVector,
+    icon: Painter,
     title: String,
     subtitle: String,
-    color: Color
+    itemCount: Int = 0,
+    color: Color,
+    onAdd: () -> Unit
 ) {
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        onClick = {
-            // navigate
-        }
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = { onAdd() }
     ) {
-
         Row(
             modifier = Modifier.padding(18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Box(
                 modifier = Modifier
                     .size(56.dp)
@@ -360,30 +623,16 @@ private fun CategoryCard(
                     .background(color.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
             ) {
-
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = color
-                )
+                Icon(painter = icon, contentDescription = null, tint = color)
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-
-                Text(
-                    text = title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
-                    text = subtitle,
+                    text = if (itemCount > 0) "Добавлено: $itemCount" else subtitle,
                     color = Color.Gray
                 )
             }
@@ -398,9 +647,11 @@ private fun CategoryCard(
 }
 
 @Composable
-private fun BottomCreateButton() {
-
+private fun BottomCreateButton(
+    onSave: () -> Unit
+) {
     Surface(
+        color = Color.Transparent,
         tonalElevation = 8.dp
     ) {
 
@@ -411,15 +662,20 @@ private fun BottomCreateButton() {
         ) {
 
             Button(
-                onClick = {},
+                onClick = {
+                    onSave()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(58.dp),
-                shape = RoundedCornerShape(20.dp)
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFCFEAC0),
+                    contentColor = Color(0xA9464D62)
+                )
             ) {
-
                 Icon(
-                    imageVector = Icons.Outlined.Clear,
+                    imageVector = Icons.Outlined.Check,
                     contentDescription = null
                 )
 
@@ -441,10 +697,19 @@ private fun BottomCreateButton() {
 )
 @Composable
 fun CreateTripScreenPreview() {
-    MaterialTheme {
+    TravelAppTheme() {
+        val mockViewModel = remember { PreviewTripViewModel(
+        ) }
         NewTripScreen(
             onNavigateBack = {},
-            viewModel = TripViewModel()
+            viewModel = mockViewModel,
+            onNavigateToTrips = {},
+            onNavigateToBudget = {},
+            onNavigateToHotel = {},
+            onNavigateToNote = {},
+            onNavigateToPackingList = {},
+            onNavigateToRoute = {},
+            onNavigateToTicket = {}
         )
     }
 }

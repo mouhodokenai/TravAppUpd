@@ -3,8 +3,11 @@ package com.example.travappupd.data.model.repository
 import com.example.travappupd.data.dao.BudgetDao
 import com.example.travappupd.data.entities.Budget
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class BudgetRepository(private val budgetDao: BudgetDao) : ItemRepository<Budget> {
+class BudgetRepository @Inject constructor(
+    private val budgetDao: BudgetDao
+) : ItemRepository<Budget> {
 
     override fun getItemsByTripId(tripId: Long): Flow<List<Budget>> {
         return  budgetDao.getByTripId(tripId)

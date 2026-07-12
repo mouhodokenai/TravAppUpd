@@ -19,9 +19,14 @@ import androidx.room.PrimaryKey
 )
 
 data class PackingList(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "item_id") val itemId: Int = 0,
+    @PrimaryKey
+    @ColumnInfo(name = "item_id") val itemId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
     val name: String,
     @ColumnInfo(name = "is_packed") val isPacked: Boolean = false
+)
+
+data class PackingListDraft(
+    val name: String,
+    val isPacked: Boolean = false
 )

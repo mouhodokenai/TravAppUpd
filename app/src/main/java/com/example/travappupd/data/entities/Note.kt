@@ -19,9 +19,14 @@ import androidx.room.PrimaryKey
 )
 
 data class Note(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "note_id") val noteId: Int = 0,
+    @PrimaryKey
+    @ColumnInfo(name = "note_id") val noteId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
+    val title: String,
+    val content: String
+)
+
+data class NoteDraft(
     val title: String,
     val content: String
 )

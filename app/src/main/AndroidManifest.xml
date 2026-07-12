@@ -9,7 +9,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TravAppUpd">
+        android:theme="@style/Theme.TravAppUpd"
+        android:name=".App">
 
         <activity
             android:name=".presentation.view.MainActivity"

@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import com.example.travappupd.ui.theme.Pink40
 import com.example.travappupd.ui.theme.Pink80
 import com.example.travappupd.ui.theme.Purple40
@@ -38,6 +39,9 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+
+@Composable
+fun isPreview(): Boolean = LocalInspectionMode.current
 
 @Composable
 fun TravelAppTheme(

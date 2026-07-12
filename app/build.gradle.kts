@@ -7,6 +7,8 @@ plugins {
 
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+
+
 }
 
 android {
@@ -15,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.travappupd"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -45,6 +47,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+
+        isCoreLibraryDesugaringEnabled = true
     }
 }
 
@@ -63,6 +67,13 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.ui.text)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.room3.common.jvm)
+    implementation(libs.androidx.foundation)
     debugImplementation(libs.androidx.ui.tooling)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
@@ -86,8 +97,12 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     ksp(libs.hilt.android.compiler)
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation("androidx.compose.material:material-icons-extended:1.6.8")
 
 }

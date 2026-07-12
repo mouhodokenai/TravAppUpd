@@ -18,8 +18,8 @@ import androidx.room.PrimaryKey
     indices = [Index(value = ["trip_id"])]
 )
 data class Route(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "route_id") val routeId: Int = 0,
+    @PrimaryKey
+    @ColumnInfo(name = "route_id") val routeId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
     val place: String,
     val latitude: Double,
@@ -27,3 +27,9 @@ data class Route(
     @ColumnInfo(name = "order_index") val orderIndex: Int? = null
 )
 
+data class RouteDraft(
+    val place: String,
+    val latitude: Double,
+    val longitude: Double,
+    val orderIndex: Int? = null
+)
