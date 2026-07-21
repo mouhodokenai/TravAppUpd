@@ -2,8 +2,10 @@ package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.travappupd.data.entities.Hotel
 import com.example.travappupd.data.model.repository.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,12 +21,25 @@ abstract class ItemViewModel<Item>(
     private val _selectedTripId = MutableStateFlow<Long?>(0)
     val selectedTripId: StateFlow<Long?> = _selectedTripId.asStateFlow()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val items: Flow<List<Item>> = _selectedTripId.flatMapLatest { tripId ->
         if (tripId != null) {
             repository.getItemsByTripId(tripId)
         } else {
             flowOf(emptyList())
         }
+    }
+
+    var pendingDelete: Item? = null
+
+    fun deleteWithUndo(item: Item) {
+        pendingDelete = item
+        deleteItem(item)
+    }
+
+
+    fun clearPendingDelete() {
+        pendingDelete = null
     }
 
     fun selectTrip(tripId: Long) {

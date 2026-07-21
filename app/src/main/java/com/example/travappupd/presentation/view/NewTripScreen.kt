@@ -552,49 +552,13 @@ private fun EditableDateBlock(
                 onDateClick(selectedDate)
                 showDatePicker = false
             },
-            onDismiss = { showDatePicker = false }
+            onDismiss = { showDatePicker = false },
+            initialDate = " "
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModal(
-    onDateSelected: (LocalDate) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState()
-    val selectedDate = datePickerState.selectedDateMillis?.let {
-        val formatter = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
-        formatter.format(Date(it))
-    } ?: ""
 
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        val localDate = Instant.ofEpochMilli(millis)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate()
-                        onDateSelected(localDate)
-                    }
-                    onDismiss()
-                }
-            ) {
-                Text("Выбрать")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Отмена")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
-    }
-}
 
 
 @Composable

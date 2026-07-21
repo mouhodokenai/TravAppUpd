@@ -26,6 +26,8 @@ uiText = "1.11.3"
 material3Version = "1.4.0"
 room3CommonJvmVersion = "3.0.0-rc01"
 foundation = "1.11.3"
+foundationLayoutVersion = "1.11.4"
+androidxFoundation = "1.11.4"
 
 
 [libraries]
@@ -77,6 +79,8 @@ androidx-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.re
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
 androidx-room3-common-jvm = { group = "androidx.room3", name = "room3-common-jvm", version.ref = "room3CommonJvmVersion" }
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }
+foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "androidxFoundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

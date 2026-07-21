@@ -74,6 +74,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room3.common.jvm)
     implementation(libs.androidx.foundation)
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.foundation)
     debugImplementation(libs.androidx.ui.tooling)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)

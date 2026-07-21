@@ -2,6 +2,7 @@ package com.example.travappupd.presentation.view
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -82,6 +83,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -89,6 +92,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room3.Delete
+import com.example.travappupd.R
 import com.example.travappupd.presentation.viewmodel.BudgetViewModel
 import com.example.travappupd.presentation.viewmodel.CurrencyTotal
 import com.example.travappupd.presentation.viewmodel.PreviewBudgetViewModel
@@ -132,83 +136,102 @@ fun BudgetScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text("Бюджет", fontWeight = FontWeight.Medium)
-                        Text(
-                            text = "Планирование расходов поездки",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Назад")
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                editingBudget = null
-                showSheet = true
-            }) {
-                Icon(Icons.Outlined.Add, contentDescription = "Добавить расход")
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                Snackbar(
-                    action = {
-                        IconButton(onClick = { data.performAction() }) {
-                            Text("Отменить", color = MaterialTheme.colorScheme.inversePrimary)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(R.drawable.money),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = {},
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.AutoMirrored.Outlined.ArrowBack,
+                                contentDescription = null)
                         }
                     }
-                ) { Text(data.visuals.message) }
-            }
-        }
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-
-            BudgetSummaryCard(
-                totalsByCurrency = totalsByCurrency,
-                categoryCount = categoryCount,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            )
-
-            if (budgetItems.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {
+                    editingBudget = null
+                    showSheet = true
+                },
+                    containerColor = Color(0xFFDEEDE7)
                 ) {
-                    Text(
-                        text = "Пока нет расходов. Добавьте первый, нажав на кнопку «+».",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 32.dp)
+                    Icon(Icons.Outlined.Add, contentDescription = null)
+                }
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState) { data ->
+                    Snackbar(
+                        action = {
+                            IconButton(onClick = { data.performAction() }) {
+                                Text("Отменить", color = MaterialTheme.colorScheme.inversePrimary)
+                            }
+                        }
+                    ) { Text(data.visuals.message) }
+                }
+            }
+        ) { padding ->
+
+            Column(modifier = Modifier.padding(padding)) {
+
+                Row(modifier = Modifier.padding(PaddingValues(
+                    horizontal = 20.dp,
+                    vertical = 8.dp
+                ))) {
+                    HeaderSection(
+                        "Бюджет",
+                        "Планирование расходов поездки"
                     )
                 }
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(budgetItems, key = { it.budgetId }) { budget ->
-                        BudgetExpenseCard(
-                            budget = budget,
-                            onClick = {
-                                editingBudget = budget
-                                showSheet = true
-                            },
-                            onDelete = { deleteWithSnackbar(budget) }
+
+                BudgetSummaryCard(
+                    totalsByCurrency = totalsByCurrency,
+                    categoryCount = categoryCount,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+
+                if (budgetItems.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Пока нет расходов. Добавьте первый, нажав на кнопку «+».",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 24.dp, vertical = 16.dp)
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(budgetItems, key = { it.budgetId }) { budget ->
+                            BudgetExpenseCard(
+                                budget = budget,
+                                onClick = {
+                                    editingBudget = budget
+                                    showSheet = true
+                                },
+                                onDelete = { deleteWithSnackbar(budget) }
+                            )
+                        }
                     }
                 }
             }
@@ -333,7 +356,7 @@ fun BudgetExpenseCard(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Удалить",
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
@@ -516,7 +539,7 @@ fun BudgetFormBottomSheet(
             ) {
                 if (isEditing && onDelete != null) {
                     IconButton(onClick = { editingBudget?.let(onDelete) }) {
-                        Icon(Icons.Outlined.Delete, contentDescription = "Удалить расход")
+                        Icon(Icons.Outlined.Delete, contentDescription = null)
                     }
                 }
 

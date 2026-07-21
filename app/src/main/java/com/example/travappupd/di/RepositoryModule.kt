@@ -9,10 +9,14 @@ import com.example.travappupd.data.dao.TicketDao
 import com.example.travappupd.data.dao.TripDao
 import com.example.travappupd.data.database.TravDatabase
 import com.example.travappupd.data.entities.Budget
-import com.example.travappupd.data.model.repository.BudgetRepository
+import com.example.travappupd.data.entities.Hotel
+import com.example.travappupd.data.entities.Note
+import com.example.travappupd.data.repositories.BudgetRepository
 import com.example.travappupd.data.model.repository.ItemRepository
+import com.example.travappupd.data.model.repository.NoteRepository
 import com.example.travappupd.data.repositories.TripRepository
 import com.example.travappupd.data.repositories.DraftTripRepository
+import com.example.travappupd.data.repositories.HotelRepository
 import com.example.travappupd.data.repositories.TripRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -54,6 +58,22 @@ object RepositoryModule {
         budgetDao: BudgetDao
     ): ItemRepository<Budget> {
         return BudgetRepository(budgetDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHotelRepository(
+        hotelDao: HotelDao
+    ): ItemRepository<Hotel> {
+        return HotelRepository(hotelDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNoteRepository(
+        noteDao: NoteDao
+    ): ItemRepository<Note> {
+        return NoteRepository(noteDao)
     }
 
     @Provides

@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 open class BudgetViewModel @Inject constructor(
-    private val budgetRepository: ItemRepository<Budget>
+    budgetRepository: ItemRepository<Budget>
 ) : ItemViewModel<Budget>(budgetRepository) {
 
     val budgetItems: StateFlow<List<Budget>> = items
@@ -34,22 +34,11 @@ open class BudgetViewModel @Inject constructor(
         .map { list -> list.map { it.category }.distinct().size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
-    private var pendingDelete: Budget? = null
-
-    fun deleteWithUndo(budget: Budget) {
-        pendingDelete = budget
-        deleteItem(budget)
-    }
-
     fun undoDelete() {
-        pendingDelete?.let { budget ->
-            addItem(budget.copy(budgetId = 0))
+        pendingDelete?.let { item ->
+            addItem(item.copy())
             pendingDelete = null
         }
-    }
-
-    fun clearPendingDelete() {
-        pendingDelete = null
     }
 }
 
