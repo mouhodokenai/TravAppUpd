@@ -3,6 +3,7 @@ package com.example.travappupd.presentation.view
 import android.annotation.SuppressLint
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -69,13 +70,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.travappupd.R
 import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.Hotel
 import com.example.travappupd.presentation.viewmodel.CurrencyTotal
@@ -124,115 +128,129 @@ fun HotelScreen(
             }
         }
     }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                editingHotel = null
-                showSheet = true
-            }) {
-                Icon(Icons.Outlined.Add, contentDescription = null)
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                Snackbar(
-                    action = {
-                        IconButton(onClick = { data.performAction() }) {
-                            Text("Отменить", color = MaterialTheme.colorScheme.inversePrimary)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(R.drawable.hotell),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = { },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
                         }
                     }
-                ) { Text(data.visuals.message) }
-            }
-        }
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-
-            Row(modifier = Modifier.padding(PaddingValues(
-                horizontal = 20.dp,
-                vertical = 8.dp
-            ))) {
-                HeaderSection(
-                    "Отели",
-                    "Проживание во время поездки"
                 )
-            }
-
-            HotelSummaryCard(
-                hotelCount = hotelItems.size,
-                totalNights = totalNights,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            )
-
-            if (hotelItems.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {
+                    editingHotel = null
+                    showSheet = true
+                },
+                    containerColor = Color(0xFFF1DBF7)
                 ) {
-                    Text(
-                        text = "Пока нет отелей. Добавьте первый, нажав на кнопку «+».",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 32.dp)
+                    Icon(Icons.Outlined.Add, contentDescription = null)
+                }
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState) { data ->
+                    Snackbar(
+                        action = {
+                            IconButton(onClick = { data.performAction() }) {
+                                Text("Отменить", color = MaterialTheme.colorScheme.inversePrimary)
+                            }
+                        }
+                    ) { Text(data.visuals.message) }
+                }
+            }
+        ) { padding ->
+            Column(modifier = Modifier.padding(padding)) {
+
+                Row(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            horizontal = 20.dp,
+                            vertical = 8.dp
+                        )
+                    )
+                ) {
+                    HeaderSection(
+                        "Отели",
+                        "Проживание во время поездки"
                     )
                 }
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(hotelItems, key = { it.hotelId }) { hotel ->
-                        HotelCard(
-                            hotel = hotel,
-                            onClick = {
-                                editingHotel = hotel
-                                showSheet = true
-                            },
-                            onDelete = { deleteWithSnackbar(hotel) }
+
+                HotelSummaryCard(
+                    hotelCount = hotelItems.size,
+                    totalNights = totalNights,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+
+                if (hotelItems.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Пока нет отелей. Добавьте первый, нажав на кнопку «+».",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 32.dp)
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(hotelItems, key = { it.hotelId }) { hotel ->
+                            HotelCard(
+                                hotel = hotel,
+                                onClick = {
+                                    editingHotel = hotel
+                                    showSheet = true
+                                },
+                                onDelete = { deleteWithSnackbar(hotel) }
+                            )
+                        }
                     }
                 }
             }
         }
-    }
 
-    if (showSheet) {
-        HotelFormBottomSheet(
-            sheetState = sheetState,
-            tripId = tripId,
-            editingHotel = editingHotel,
-            onDismiss = { showSheet = false },
-            onSave = { hotel ->
-                if (nightsBetween( hotel.checkInDate, hotel.checkOutDate) < 0)
-                    Toast.makeText(context, "Ошибка при выборе даты", Toast.LENGTH_SHORT).show()
-                else {
-                    if (editingHotel != null) {
-                        viewModel.updateItem(hotel)
-                    } else {
-                        viewModel.addItem(hotel)
+        if (showSheet) {
+            HotelFormBottomSheet(
+                sheetState = sheetState,
+                tripId = tripId,
+                editingHotel = editingHotel,
+                onDismiss = { showSheet = false },
+                onSave = { hotel ->
+                    if (nightsBetween(hotel.checkInDate, hotel.checkOutDate) < 0)
+                        Toast.makeText(context, "Ошибка при выборе даты", Toast.LENGTH_SHORT).show()
+                    else {
+                        if (editingHotel != null) {
+                            viewModel.updateItem(hotel)
+                        } else {
+                            viewModel.addItem(hotel)
+                        }
+                        showSheet = false
                     }
-                    showSheet = false
-                }
 
-            },
-            onDelete = { hotel ->
-                showSheet = false
-                deleteWithSnackbar(hotel)
-            }
-        )
+                },
+                onDelete = { hotel ->
+                    showSheet = false
+                    deleteWithSnackbar(hotel)
+                }
+            )
+        }
     }
 }
 
@@ -245,7 +263,9 @@ private fun HotelSummaryCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Row(
             modifier = Modifier

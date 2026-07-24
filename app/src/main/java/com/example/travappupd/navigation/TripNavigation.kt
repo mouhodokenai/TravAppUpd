@@ -23,6 +23,7 @@ import com.example.travappupd.presentation.viewmodel.BudgetViewModel
 import com.example.travappupd.presentation.viewmodel.DraftViewModelFactory
 import com.example.travappupd.presentation.viewmodel.HotelViewModel
 import com.example.travappupd.presentation.viewmodel.NoteViewModel
+import com.example.travappupd.presentation.viewmodel.PackingListViewModel
 import com.example.travappupd.presentation.viewmodel.TripViewModel
 
 @Composable
@@ -119,60 +120,62 @@ fun TripNavigation() {
                 )
             }
 
+            composable("draftPackingList") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("createTrip")
+                }
+                val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
+
+                val packingListViewModel: PackingListViewModel = viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    key = "draftPackingListViewModel",
+                    factory = DraftViewModelFactory { PackingListViewModel(tripViewModel.packingListRepository) }
+                )
+
+                PackingListScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    tripId = tripViewModel.tripId,
+                    viewModel = packingListViewModel
+                )
+            }
+
 
             /*
-                                    composable("draftPackingList") { backStackEntry ->
-                                        val parentEntry = remember(backStackEntry) {
-                                            navController.getBackStackEntry("createTrip")
-                                        }
-                                        val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
+                                                composable("draftRoute") { backStackEntry ->
+                                                    val parentEntry = remember(backStackEntry) {
+                                                        navController.getBackStackEntry("createTrip")
+                                                    }
+                                                    val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
 
-                                        val packingListViewModel: PackingListViewModel = viewModel(
-                                            viewModelStoreOwner = parentEntry,
-                                            key = "draftPackingListViewModel",
-                                            factory = DraftViewModelFactory { PackingListViewModel(tripViewModel.packingListRepository) }
-                                        )
+                                                    val routeViewModel: RouteViewModel = viewModel(
+                                                        viewModelStoreOwner = parentEntry,
+                                                        key = "draftRouteViewModel",
+                                                        factory = DraftViewModelFactory { RouteViewModel(tripViewModel.routeRepository) }
+                                                    )
 
-                                        PackingListScreen(
-                                            onNavigateBack = { navController.popBackStack() }
-                                        )
-                                    }
+                                                    RouteScreen(
+                                                        onNavigateBack = { navController.popBackStack() }
+                                                    )
+                                                }
 
-                                    composable("draftRoute") { backStackEntry ->
-                                        val parentEntry = remember(backStackEntry) {
-                                            navController.getBackStackEntry("createTrip")
-                                        }
-                                        val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
+                                                composable("draftTicket") { backStackEntry ->
+                                                    val parentEntry = remember(backStackEntry) {
+                                                        navController.getBackStackEntry("createTrip")
+                                                    }
+                                                    val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
 
-                                        val routeViewModel: RouteViewModel = viewModel(
-                                            viewModelStoreOwner = parentEntry,
-                                            key = "draftRouteViewModel",
-                                            factory = DraftViewModelFactory { RouteViewModel(tripViewModel.routeRepository) }
-                                        )
+                                                    val ticketViewModel: TicketViewModel = viewModel(
+                                                        viewModelStoreOwner = parentEntry,
+                                                        key = "draftTicketViewModel",
+                                                        factory = DraftViewModelFactory { TicketViewModel(tripViewModel.ticketRepository) }
+                                                    )
 
-                                        RouteScreen(
-                                            onNavigateBack = { navController.popBackStack() }
-                                        )
-                                    }
-
-                                    composable("draftTicket") { backStackEntry ->
-                                        val parentEntry = remember(backStackEntry) {
-                                            navController.getBackStackEntry("createTrip")
-                                        }
-                                        val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
-
-                                        val ticketViewModel: TicketViewModel = viewModel(
-                                            viewModelStoreOwner = parentEntry,
-                                            key = "draftTicketViewModel",
-                                            factory = DraftViewModelFactory { TicketViewModel(tripViewModel.ticketRepository) }
-                                        )
-
-                                        TicketScreen(
-                                            onNavigateBack = { navController.popBackStack() }
-                                        )
-                                    }
-                                }
-                        */
+                                                    TicketScreen(
+                                                        onNavigateBack = { navController.popBackStack() }
+                                                    )
+                                                }
+                                            }
+                                    */
 
             composable(
                 "budget/{id}",
@@ -210,9 +213,11 @@ fun TripNavigation() {
             composable(
                 "packingList/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.LongType })
-            ) {
+            ) {backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("id") ?: return@composable
                 PackingListScreen(
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    tripId = tripId
                 )
             }
 

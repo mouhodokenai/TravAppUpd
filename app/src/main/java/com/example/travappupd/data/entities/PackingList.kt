@@ -22,8 +22,8 @@ data class PackingList(
     @PrimaryKey
     @ColumnInfo(name = "item_id") val itemId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
-    val name: String,
-    @ColumnInfo(name = "is_packed") val isPacked: Boolean = false
+    var name: String,
+    @ColumnInfo(name = "is_packed") var isPacked: Boolean = false
 )
 
 data class PackingListDraft(
