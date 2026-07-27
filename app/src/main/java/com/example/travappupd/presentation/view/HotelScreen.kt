@@ -86,6 +86,7 @@ import com.example.travappupd.presentation.viewmodel.CurrencyTotal
 import com.example.travappupd.presentation.viewmodel.HotelViewModel
 import com.example.travappupd.presentation.viewmodel.PreviewHotelViewModel
 import com.example.travappupd.presentation.viewmodel.nightsBetween
+import com.example.travappupd.ui.theme.ExtendedTheme
 import com.example.travappupd.ui.theme.TravelAppTheme
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -152,7 +153,7 @@ fun HotelScreen(
                     editingHotel = null
                     showSheet = true
                 },
-                    containerColor = Color(0xFFF1DBF7)
+                    containerColor = ExtendedTheme.colors.hotelColor
                 ) {
                     Icon(Icons.Outlined.Add, contentDescription = null)
                 }
@@ -201,7 +202,7 @@ fun HotelScreen(
                         Text(
                             text = "Пока нет отелей. Добавьте первый, нажав на кнопку «+».",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = ExtendedTheme.colors.textColor,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(horizontal = 32.dp)
                         )
@@ -264,7 +265,7 @@ private fun HotelSummaryCard(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = ExtendedTheme.colors.summaryCardColor
         )
     ) {
         Row(
@@ -277,7 +278,7 @@ private fun HotelSummaryCard(
                 Text(
                     text = "Отелей",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = ExtendedTheme.colors.textColor
                 )
                 Text(
                     text = hotelCount.toString(),
@@ -289,7 +290,7 @@ private fun HotelSummaryCard(
                 Text(
                     text = "Ночей всего",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = ExtendedTheme.colors.textColor
                 )
                 Text(
                     text = totalNights.toString(),
@@ -366,7 +367,7 @@ fun HotelCard(
                     Icon(
                         imageVector = Icons.Outlined.Hotel,
                         contentDescription = null,
-                        tint = Color(0xFF6E5FA8)
+                        tint = ExtendedTheme.colors.hotelColor2
                     )
                 }
 
@@ -379,20 +380,20 @@ fun HotelCard(
                     Text(
                         text = hotel.address,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = ExtendedTheme.colors.textColor,
                         maxLines = 1
                     )
                     Text(
                         text = "${hotel.checkInDate} → ${hotel.checkOutDate}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = ExtendedTheme.colors.textColor
                     )
                 }
 
                 Text(
                     text = "${nightsBetween(hotel.checkInDate, hotel.checkOutDate)} ноч.",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = ExtendedTheme.colors.textColor
                 )
             }
         }

@@ -75,6 +75,7 @@ import com.example.travappupd.R
 import com.example.travappupd.data.entities.Note
 import com.example.travappupd.presentation.viewmodel.NoteViewModel
 import com.example.travappupd.presentation.viewmodel.PreviewNoteViewModel
+import com.example.travappupd.ui.theme.ExtendedTheme
 import com.example.travappupd.ui.theme.TravelAppTheme
 import com.example.travelapp.budget.BudgetCategories
 import kotlinx.coroutines.launch
@@ -141,7 +142,7 @@ fun NoteScreen(
                 editingNote = null
                 showSheet = true
             },
-                containerColor = Color(0xFFEEDCC7)
+                containerColor = ExtendedTheme.colors.noteColor
             ) {
                 Icon(Icons.Outlined.Add, contentDescription = null)
             }
@@ -174,7 +175,7 @@ fun NoteScreen(
                     Text(
                         text = "Пока нет записей. Добавьте первую, нажав на кнопку «+».",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = ExtendedTheme.colors.textColor,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .background(
@@ -296,7 +297,7 @@ fun NoteCard(
                     Icon(
                         imageVector = titleInfo.icon,
                         contentDescription = null,
-                        tint = Color(0xFF6E5FA8)
+                        tint = ExtendedTheme.colors.noteColor2
                     )
                 }
 

@@ -37,6 +37,7 @@ import com.example.travappupd.ui.theme.TravelAppTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.travappupd.R
 import com.example.travappupd.navigation.TripNavigation
+import com.example.travappupd.ui.theme.ExtendedTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -160,7 +161,7 @@ fun MainScreen(
                                 text = stringResource(R.string.heading_main),
                                 fontSize = 40.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF4A5063)
+                                color = ExtendedTheme.colors.titleColor
                             )
 
                             Spacer(modifier = Modifier.height(12.dp))
@@ -177,7 +178,7 @@ fun MainScreen(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    color = Color(0xFF4A5063)
+                    color = ExtendedTheme.colors.textColor
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -195,8 +196,8 @@ fun MainScreen(
                         number = "28",
                         title = stringResource(R.string.country_stat),
                         subtitle = stringResource(R.string.visited_stat),
-                        color = Color(0xFFEF9F98),
-                        containerColor = Color(0x16EF9F98)
+                        color = ExtendedTheme.colors.statCountryIconColor,
+                        containerColor = ExtendedTheme.colors.statCountryColor
                     )
 
                     StatisticCard(
@@ -205,8 +206,8 @@ fun MainScreen(
                         number = "132",
                         title = stringResource(R.string.place_stat),
                         subtitle = stringResource(R.string.visited_stat),
-                        color = Color(0xFF45C4A1),
-                        containerColor = Color(0x1445C4A1)
+                        color = ExtendedTheme.colors.statPlaceIconColor,
+                        containerColor = ExtendedTheme.colors.statPlaceColor
                     )
 
                     StatisticCard(
@@ -215,8 +216,8 @@ fun MainScreen(
                         number = "47",
                         title = stringResource(R.string.trips_stat),
                         subtitle = stringResource(R.string.total_stat),
-                        color = Color(0xFF9B6BFF),
-                        containerColor = Color(0x169B6BFF)
+                        color = ExtendedTheme.colors.statTripIconColor,
+                        containerColor = ExtendedTheme.colors.statTripColor
                     )
                 }
 
@@ -229,7 +230,7 @@ fun MainScreen(
                     title = stringResource(R.string.new_trip),
                     subtitle = stringResource(R.string.add_trip),
                     icon = Icons.Outlined.Add,
-                    background = Color(0xFFA1B2F6),
+                    background = ExtendedTheme.colors.newTripColor,
                     onClick = onNavigateToNewTrip
                 )
 
@@ -302,7 +303,7 @@ fun MainScreen(
                         text = number,
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF4A5063)
+                        color = ExtendedTheme.colors.titleColor
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -310,12 +311,12 @@ fun MainScreen(
                     Text(
                         text = title,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF4A5063)
+                        color = ExtendedTheme.colors.titleColor
                     )
 
                     Text(
                         text = subtitle,
-                        color = Color.Gray
+                        color = ExtendedTheme.colors.textColor
                     )
                 }
             }
@@ -356,7 +357,7 @@ fun MainScreen(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = Color.Gray,
+                        tint = ExtendedTheme.colors.textColor,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -385,7 +386,7 @@ fun MainScreen(
                 Icon(
                     imageVector = Icons.Outlined.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = Color.Gray
+                    tint = ExtendedTheme.colors.textColor
                 )
             }
         }
@@ -406,7 +407,7 @@ fun SecondaryCard(
             .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xB4A0B1F4)
+            containerColor = ExtendedTheme.colors.tripColor
         )
     ) {
 
@@ -419,14 +420,14 @@ fun SecondaryCard(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(RoundedCornerShape(18.dp))
-                    .background(Color(0xFFFDFDFD)),
+                    .background(Color.White),
                 contentAlignment = Alignment.Center
             ) {
 
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = Color.Gray
+                    tint = ExtendedTheme.colors.textColor
                 )
             }
 

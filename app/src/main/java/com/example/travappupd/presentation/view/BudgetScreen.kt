@@ -96,6 +96,7 @@ import com.example.travappupd.R
 import com.example.travappupd.presentation.viewmodel.BudgetViewModel
 import com.example.travappupd.presentation.viewmodel.CurrencyTotal
 import com.example.travappupd.presentation.viewmodel.PreviewBudgetViewModel
+import com.example.travappupd.ui.theme.ExtendedTheme
 import com.example.travelapp.budget.BudgetCategories
 import com.example.travelapp.budget.SUPPORTED_CURRENCIES
 import kotlinx.coroutines.launch
@@ -161,7 +162,7 @@ fun BudgetScreen(
                     editingBudget = null
                     showSheet = true
                 },
-                    containerColor = Color(0xFFDEEDE7)
+                    containerColor = ExtendedTheme.colors.budgetColor
                 ) {
                     Icon(Icons.Outlined.Add, contentDescription = null)
                 }
@@ -207,7 +208,7 @@ fun BudgetScreen(
                         Text(
                             text = "Пока нет расходов. Добавьте первый, нажав на кнопку «+».",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = ExtendedTheme.colors.textColor,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .background(
@@ -270,7 +271,7 @@ private fun BudgetSummaryCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        colors = CardDefaults.cardColors(containerColor = ExtendedTheme.colors.summaryCardColor)
     ) {
         Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
             Row(
@@ -281,7 +282,7 @@ private fun BudgetSummaryCard(
                     Text(
                         text = "Всего запланировано",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = ExtendedTheme.colors.textColor
                     )
                     if (totalsByCurrency.isEmpty()) {
                         Text("—", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Medium)
@@ -299,7 +300,7 @@ private fun BudgetSummaryCard(
                     Text(
                         text = "Категорий",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = ExtendedTheme.colors.textColor
                     )
                     Text(
                         text = categoryCount.toString(),

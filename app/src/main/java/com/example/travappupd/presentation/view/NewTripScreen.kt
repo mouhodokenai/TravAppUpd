@@ -55,6 +55,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
+import com.example.travappupd.ui.theme.ExtendedTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -142,7 +143,7 @@ fun NewTripScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Color(0xFFF7F8FC)),
+                .background(Color(0xFFF7F8FC)), //???
             contentPadding = PaddingValues(
                 horizontal = 20.dp,
                 vertical = 8.dp
@@ -199,11 +200,19 @@ fun NewTripScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
+                    CategoryCard( //???
+                        icon = painterResource(R.drawable.location2),
+                        title = "Маршрут",
+                        subtitle = " ",
+                        color = Color(0xFF62B44B),
+                        onAdd = { onNavigateToRoute(tripId) }
+                    )
+
                     CategoryCard(
                         icon = painterResource(R.drawable.luggage2),
                         title = "Багаж",
                         subtitle = " ",
-                        color = Color(0xFF5B8DEF),
+                        color = ExtendedTheme.colors.baggageColor2,
                         onAdd = { onNavigateToPackingList(tripId) }
                     )
 
@@ -211,23 +220,15 @@ fun NewTripScreen(
                         icon = painterResource(R.drawable.wallet),
                         title = "Бюджет",
                         subtitle = " ",
-                        color = Color(0xFF2DBE7F),
+                        color = ExtendedTheme.colors.budgetColor2,
                         onAdd = { onNavigateToBudget(tripId) }
-                    )
-
-                    CategoryCard(
-                        icon = painterResource(R.drawable.note),
-                        title = "Заметки",
-                        subtitle = " ",
-                        color = Color(0xFFFFB648),
-                        onAdd = { onNavigateToNote(tripId) }
                     )
 
                     CategoryCard(
                         icon = painterResource(R.drawable.ticket),
                         title = "Билеты",
                         subtitle = " ",
-                        color = Color(0xFF8D63FF),
+                        color = Color(0xFF8D63FF), //???
                         onAdd = { onNavigateToTicket(tripId) }
                     )
 
@@ -235,16 +236,16 @@ fun NewTripScreen(
                         icon = painterResource(R.drawable.hotel),
                         title = "Отели",
                         subtitle = " ",
-                        color = Color(0xFFFF725E),
+                        color = ExtendedTheme.colors.hotelColor2,
                         onAdd = { onNavigateToHotel(tripId) }
                     )
 
                     CategoryCard(
-                        icon = painterResource(R.drawable.location2),
-                        title = "Маршрут мест",
+                        icon = painterResource(R.drawable.note),
+                        title = "Заметки",
                         subtitle = " ",
-                        color = Color(0xFF62B44B),
-                        onAdd = { onNavigateToRoute(tripId) }
+                        color = ExtendedTheme.colors.noteColor2,
+                        onAdd = { onNavigateToNote(tripId) }
                     )
 
                     Spacer(modifier = Modifier.height(100.dp))
@@ -457,7 +458,7 @@ private fun TripInfoSection(
                                     if (tripName.isBlank()) {
                                         Text(
                                             text = "Введите название",
-                                            color = Color(0xA9464D62),
+                                            color = ExtendedTheme.colors.textColor,
                                             fontSize = 18.sp,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -541,7 +542,7 @@ private fun EditableDateBlock(
                 text = date.ifEmpty { placeholder },
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = if (date == placeholder) Color(0xA9464D62) else Color(0xFF46465E)
+                color = if (date == placeholder) ExtendedTheme.colors.textColor else Color(0xFF46465E) ///???
             )
         }
     }
@@ -634,8 +635,8 @@ private fun BottomCreateButton(
                     .height(58.dp),
                 shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFCFEAC0),
-                    contentColor = Color(0xA9464D62)
+                    containerColor = ExtendedTheme.colors.newTripColor,
+                    contentColor = ExtendedTheme.colors.textColor
                 )
             ) {
                 Icon(

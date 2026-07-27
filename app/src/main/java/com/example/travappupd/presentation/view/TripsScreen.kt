@@ -54,6 +54,7 @@ import com.example.travappupd.R
 import com.example.travappupd.presentation.viewmodel.PreviewTripsViewModel
 import com.example.travappupd.presentation.viewmodel.TripViewModel
 import com.example.travappupd.presentation.viewmodel.TripsViewModel
+import com.example.travappupd.ui.theme.ExtendedTheme
 import com.example.travappupd.ui.theme.TravelAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -198,7 +199,7 @@ fun TripCard(
                     Icon(
                         imageVector = Icons.Outlined.DateRange,
                         contentDescription = null,
-                        tint = Color(0xFF65676E)
+                        tint = ExtendedTheme.colors.textColor
                     )
                     Spacer(modifier = Modifier.width(4.dp))
 
@@ -216,7 +217,7 @@ fun TripCard(
                     Icon(
                         imageVector = Icons.Outlined.Place,
                         contentDescription = null,
-                        tint = Color(0xFF65676E)
+                        tint = ExtendedTheme.colors.textColor
                     )
                     Spacer(modifier = Modifier.width(4.dp))
 
@@ -231,7 +232,7 @@ fun TripCard(
             Icon(
                 imageVector =Icons.Outlined.MoreVert,
                 contentDescription = null,
-                tint = Color(0xFF65676E)
+                tint = ExtendedTheme.colors.textColor
             )
         }
     }
@@ -250,7 +251,7 @@ fun HeaderSection(
             text = title,
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF46465E)
+            color = ExtendedTheme.colors.titleColor
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -259,7 +260,7 @@ fun HeaderSection(
             text = text,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xA9464D62)
+            color = ExtendedTheme.colors.textColor
         )
 
     }
