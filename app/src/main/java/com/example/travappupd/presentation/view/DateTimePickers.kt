@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Date
@@ -23,21 +24,14 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
-    initialDate: String,
+    initialDate: LocalDate?,
     onDateSelected: (LocalDate) -> Unit,
     onDismiss: () -> Unit
 ) {
     val initialMillis = remember(initialDate) {
-        initialDate.takeIf { it.isNotBlank() }?.let {
-            LocalDate.parse(it).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-        }
+        initialDate?.atStartOfDay(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()
     }
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
-
-    val selectedDate = datePickerState.selectedDateMillis?.let {
-        val formatter = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
-        formatter.format(Date(it))
-    } ?: ""
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -57,29 +51,24 @@ fun DatePickerModal(
     }
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerModal(
-    initialTime: String,
-    onTimeSelected: (String) -> Unit,
+    initialTime: LocalTime?,
+    onTimeSelected: (LocalTime) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val (initHour, initMinute) = remember(initialTime) {
-        initialTime.takeIf { it.isNotBlank() }
-            ?.split(":")
-            ?.let { it[0].toInt() to it[1].toInt() }
-            ?: (12 to 0)
-    }
-    val timePickerState = rememberTimePickerState(initialHour = initHour, initialMinute = initMinute, is24Hour = true)
+    val timePickerState = rememberTimePickerState(
+        initialHour = initialTime?.hour ?: 12,
+        initialMinute = initialTime?.minute ?: 0,
+        is24Hour = true
+    )
 
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                val formatted = "%02d:%02d".format(timePickerState.hour, timePickerState.minute)
-                onTimeSelected(formatted)
+                onTimeSelected(LocalTime.of(timePickerState.hour, timePickerState.minute))
             }) { Text("ОК") }
         },
         dismissButton = {

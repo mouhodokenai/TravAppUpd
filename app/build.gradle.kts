@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.foundation)
+    implementation(libs.androidx.core.i18n)
+    implementation(libs.places)
     debugImplementation(libs.androidx.ui.tooling)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)

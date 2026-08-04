@@ -92,7 +92,9 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.collections.forEach
 
@@ -204,7 +206,12 @@ fun HotelScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = ExtendedTheme.colors.textColor,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 32.dp)
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 24.dp, vertical = 16.dp)
                         )
                     }
                 } else {
@@ -234,7 +241,7 @@ fun HotelScreen(
                 editingHotel = editingHotel,
                 onDismiss = { showSheet = false },
                 onSave = { hotel ->
-                    if (nightsBetween(hotel.checkInDate, hotel.checkOutDate) < 0)
+                    if (nightsBetween(hotel.checkInDate!!, hotel.checkOutDate!!) < 0)
                         Toast.makeText(context, "Ошибка при выборе даты", Toast.LENGTH_SHORT).show()
                     else {
                         if (editingHotel != null) {
@@ -391,7 +398,7 @@ fun HotelCard(
                 }
 
                 Text(
-                    text = "${nightsBetween(hotel.checkInDate, hotel.checkOutDate)} ноч.",
+                    text = "${nightsBetween(hotel.checkInDate!!, hotel.checkOutDate!!)} ноч.",
                     style = MaterialTheme.typography.labelMedium,
                     color = ExtendedTheme.colors.textColor
                 )
@@ -414,15 +421,18 @@ fun HotelFormBottomSheet(
 
     var name by remember { mutableStateOf(editingHotel?.name ?: "") }
     var address by remember { mutableStateOf(editingHotel?.address ?: "") }
-    var checkInDate by remember { mutableStateOf(editingHotel?.checkInDate ?: "") }
-    var checkOutDate by remember { mutableStateOf(editingHotel?.checkOutDate ?: "") }
-    var checkInTime by remember { mutableStateOf(editingHotel?.checkInTime ?: "14:00") }
-    var checkOutTime by remember { mutableStateOf(editingHotel?.checkOutTime ?: "12:00") }
+    var checkInDate by remember { mutableStateOf(editingHotel?.checkInDate) }
+    var checkOutDate by remember { mutableStateOf(editingHotel?.checkOutDate) }
+    var checkInTime by remember { mutableStateOf(editingHotel?.checkInTime ?: LocalTime.of(14, 0)) }
+    var checkOutTime by remember { mutableStateOf(editingHotel?.checkOutTime ?: LocalTime.of(12, 0)) }
 
     var showCheckInDatePicker by remember { mutableStateOf(false) }
     var showCheckOutDatePicker by remember { mutableStateOf(false) }
     var showCheckInTimePicker by remember { mutableStateOf(false) }
     var showCheckOutTimePicker by remember { mutableStateOf(false) }
+
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("dd.MM.yyyy") }
+    val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(
@@ -463,11 +473,11 @@ fun HotelFormBottomSheet(
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = checkInDate,
+                    value = checkInDate?.format(dateFormatter) ?: "",
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Дата") },
-                    placeholder = { Text("ГГГГ-ММ-ДД") },
+                    placeholder = { Text("ДД.ММ.ГГГГ") },
                     modifier = Modifier
                         .weight(1f)
                         .clickable { showCheckInDatePicker = true },
@@ -480,7 +490,7 @@ fun HotelFormBottomSheet(
                 )
                 Spacer(Modifier.width(12.dp))
                 OutlinedTextField(
-                    value = checkInTime,
+                    value = checkInTime.format(timeFormatter),
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Время") },
@@ -502,11 +512,11 @@ fun HotelFormBottomSheet(
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = checkOutDate,
+                    value = checkOutDate?.format(dateFormatter) ?: "",
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Дата") },
-                    placeholder = { Text("ГГГГ-ММ-ДД") },
+                    placeholder = { Text("ДД.ММ.ГГГГ") },
                     modifier = Modifier
                         .weight(1f)
                         .clickable { showCheckOutDatePicker = true },
@@ -519,7 +529,7 @@ fun HotelFormBottomSheet(
                 )
                 Spacer(Modifier.width(12.dp))
                 OutlinedTextField(
-                    value = checkOutTime,
+                    value = checkOutTime.format(timeFormatter),
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Время") },
@@ -542,33 +552,32 @@ fun HotelFormBottomSheet(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (isEditing && onDelete != null) {
-                    IconButton(onClick = { editingHotel.let(onDelete) }) {
-                        Icon(Icons.Outlined.Delete, contentDescription = null)
+                    IconButton(onClick = { editingHotel?.let(onDelete) }) {
+                        Icon(Icons.Outlined.Delete, contentDescription = "Удалить отель")
                     }
                 }
 
                 Button(
                     onClick = {
-                            val hotel = (editingHotel ?: Hotel(
-                                tripId = tripId,
-                                name = "",
-                                address = "",
-                                checkInDate = "",
-                                checkOutDate = "",
-                                checkInTime = "",
-                                checkOutTime = ""
-                            )).copy(
-                                name = name,
-                                address = address,
-                                checkInDate = checkInDate,
-                                checkOutDate = checkOutDate,
-                                checkInTime = checkInTime,
-                                checkOutTime = checkOutTime
-                            )
-                            onSave(hotel)
-
+                        val hotel = (editingHotel ?: Hotel(
+                            tripId = tripId,
+                            name = "",
+                            address = "",
+                            checkInDate = null,
+                            checkOutDate = null,
+                            checkInTime = null,
+                            checkOutTime = null
+                        )).copy(
+                            name = name,
+                            address = address,
+                            checkInDate = checkInDate,
+                            checkOutDate = checkOutDate,
+                            checkInTime = checkInTime,
+                            checkOutTime = checkOutTime
+                        )
+                        onSave(hotel)
                     },
-                    enabled = name.isNotBlank() && checkInDate.isNotBlank() && checkOutDate.isNotBlank(),
+                    enabled = name.isNotBlank() && checkInDate != null && checkOutDate != null,
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Сохранить")
@@ -579,34 +588,33 @@ fun HotelFormBottomSheet(
 
     if (showCheckInDatePicker) {
         DatePickerModal(
-            initialDate = checkInDate,
-            onDateSelected = { checkInDate = it.toString(); showCheckInDatePicker = false },
+            initialDate = checkInDate!!,
+            onDateSelected = { checkInDate = it; showCheckInDatePicker = false },
             onDismiss = { showCheckInDatePicker = false }
         )
     }
     if (showCheckOutDatePicker) {
         DatePickerModal(
-            initialDate = checkOutDate,
-            onDateSelected = { checkOutDate = it.toString(); showCheckOutDatePicker = false },
+            initialDate = checkOutDate!!,
+            onDateSelected = { checkOutDate = it; showCheckOutDatePicker = false },
             onDismiss = { showCheckOutDatePicker = false }
         )
     }
     if (showCheckInTimePicker) {
         TimePickerModal(
-            initialTime = checkInTime,
-            onTimeSelected = { checkInTime = it.toString(); showCheckInTimePicker = false },
+            initialTime = checkInTime!!,
+            onTimeSelected = { checkInTime = it; showCheckInTimePicker = false },
             onDismiss = { showCheckInTimePicker = false }
         )
     }
     if (showCheckOutTimePicker) {
         TimePickerModal(
-            initialTime = checkOutTime,
-            onTimeSelected = { checkOutTime = it.toString(); showCheckOutTimePicker = false },
+            initialTime = checkOutTime!!,
+            onTimeSelected = { checkOutTime = it; showCheckOutTimePicker = false },
             onDismiss = { showCheckOutTimePicker = false }
         )
     }
 }
-
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)

@@ -1,4 +1,4 @@
-package com.example.travappupd.presentation.view.viewmodel
+package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

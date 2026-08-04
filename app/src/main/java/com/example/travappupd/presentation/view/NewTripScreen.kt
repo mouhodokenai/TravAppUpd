@@ -172,16 +172,11 @@ fun NewTripScreen(
             item {
                 TripInfoSection(
                     tripName = tripName,
-                    startDate = startDateString,
-                    endDate = endDateString,
+                    startDate = startDate,
+                    endDate = endDate,
                     onTripNameChange = { viewModel.updateTripName(it) },
-                    onStartDateChange = { dateString ->
-                        viewModel.updateStartDate(dateString)
-                    },
-
-                    onEndDateChange = { dateString ->
-                        viewModel.updateEndDate(dateString)
-                    },
+                    onStartDateChange = { date -> viewModel.updateStartDate(date) },
+                    onEndDateChange = { date -> viewModel.updateEndDate(date) },
                     isExpanded = isExpanded
                 )
             }
@@ -325,8 +320,8 @@ private fun TripPreviewCard(
                     Text(
                         text =
                             if (startDate != null && endDate != null)
-                                if (ChronoUnit.DAYS.between(startDate, endDate) > 0)
-                                "${ChronoUnit.DAYS.between(startDate, endDate)} дней"
+                                if (ChronoUnit.DAYS.between(startDate, (endDate)) > 0)
+                                "${ChronoUnit.DAYS.between((startDate), (endDate))} дней"
                                 else "ошибка при выборе даты"
                         else "0 дней",
                         color = Color.Gray
@@ -375,14 +370,13 @@ private fun TripPreviewCard(
 @Composable
 private fun TripInfoSection(
     tripName: String,
-    startDate: String,
-    endDate: String,
+    startDate: LocalDate?,
+    endDate: LocalDate?,
     onTripNameChange: (String) -> Unit,
     onStartDateChange: (LocalDate) -> Unit,
     onEndDateChange: (LocalDate) -> Unit,
     isExpanded: Boolean
 ) {
-
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -471,22 +465,15 @@ private fun TripInfoSection(
                     }
                 }
             }
-
-
             OutlinedCard(
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
-                )
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     EditableDateBlock(
                         title = "Дата начала",
                         date = startDate,
@@ -502,7 +489,7 @@ private fun TripInfoSection(
 
                     EditableDateBlock(
                         title = "Дата окончания",
-                        date = endDate.toString(),
+                        date = endDate,
                         onDateClick = onEndDateChange,
                         placeholder = "выбрать"
                     )
@@ -515,15 +502,14 @@ private fun TripInfoSection(
 @Composable
 private fun EditableDateBlock(
     title: String,
-    date: String,
+    date: LocalDate?,
     onDateClick: (LocalDate) -> Unit,
     placeholder: String = "выбрать"
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("ru")) }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = title,
             color = Color.Gray,
@@ -539,22 +525,22 @@ private fun EditableDateBlock(
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
-                text = date.ifEmpty { placeholder },
+                text = date?.format(dateFormatter) ?: placeholder,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = if (date == placeholder) ExtendedTheme.colors.textColor else Color(0xFF46465E) ///???
+                color = if (date == null) ExtendedTheme.colors.textColor else Color(0xFF46465E)
             )
         }
     }
 
     if (showDatePicker) {
         DatePickerModal(
+            initialDate = date,
             onDateSelected = { selectedDate ->
                 onDateClick(selectedDate)
                 showDatePicker = false
             },
-            onDismiss = { showDatePicker = false },
-            initialDate = " "
+            onDismiss = { showDatePicker = false }
         )
     }
 }

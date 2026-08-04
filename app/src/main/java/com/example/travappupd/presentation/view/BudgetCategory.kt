@@ -1,10 +1,8 @@
-package com.example.travelapp.budget
+package com.example.travappupd.presentation.view
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.material.icons.outlined.Category as CategoryOutlined
-import androidx.compose.material.icons.outlined.DirectionsBus as DirectionsBusOutlined
 import androidx.compose.material.icons.outlined.Flight
 import androidx.compose.material.icons.outlined.Hotel
 import androidx.compose.material.icons.outlined.LocalMovies

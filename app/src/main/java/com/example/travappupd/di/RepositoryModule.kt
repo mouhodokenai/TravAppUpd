@@ -12,10 +12,12 @@ import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.Hotel
 import com.example.travappupd.data.entities.Note
 import com.example.travappupd.data.entities.PackingList
+import com.example.travappupd.data.entities.Ticket
 import com.example.travappupd.data.repositories.BudgetRepository
 import com.example.travappupd.data.model.repository.ItemRepository
 import com.example.travappupd.data.model.repository.NoteRepository
 import com.example.travappupd.data.model.repository.PackingListRepository
+import com.example.travappupd.data.model.repository.TicketRepository
 import com.example.travappupd.data.repositories.TripRepository
 import com.example.travappupd.data.repositories.DraftTripRepository
 import com.example.travappupd.data.repositories.HotelRepository
@@ -84,6 +86,14 @@ object RepositoryModule {
         packingListDao: PackingListDao
     ): ItemRepository<PackingList> {
         return PackingListRepository(packingListDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTicketRepository(
+        ticketDao: TicketDao
+    ): ItemRepository<Ticket> {
+        return TicketRepository(ticketDao)
     }
 
     @Provides

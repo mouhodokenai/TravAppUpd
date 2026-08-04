@@ -5,6 +5,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Entity(tableName = "tickets",
     foreignKeys = [
@@ -17,6 +20,7 @@ import androidx.room.PrimaryKey
     ],
     indices = [Index(value = ["trip_id"])]
 )
+@TypeConverters(Converter::class)
 data class Ticket(
     @PrimaryKey
     @ColumnInfo(name = "ticket_id") val ticketId: Long = generateLocalId(),
@@ -24,10 +28,10 @@ data class Ticket(
     @ColumnInfo(name = "transport_type") val transportType: String,
     @ColumnInfo(name = "departure_city") val departureCity: String,
     @ColumnInfo(name = "arrival_city") val arrivalCity: String,
-    @ColumnInfo(name = "departure_time") val departureTime: String,
-    @ColumnInfo(name = "arrival_time") val arrivalTime: String,
-    @ColumnInfo(name = "departure_date") val departureDate: String,
-    @ColumnInfo(name = "arrival_date") val arrivalDate: String,
+    @ColumnInfo(name = "departure_time") val departureTime: LocalTime?,
+    @ColumnInfo(name = "arrival_time") val arrivalTime: LocalTime?,
+    @ColumnInfo(name = "departure_date") val departureDate: LocalDate,
+    @ColumnInfo(name = "arrival_date") val arrivalDate: LocalDate,
     @ColumnInfo(name = "ticket_number") val ticketNumber: String
 )
 

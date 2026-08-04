@@ -47,6 +47,7 @@ data class CurrencyTotal(val currency: String, val amount: Double)
 class PreviewBudgetViewModel : BudgetViewModel(
     budgetRepository = object : ItemRepository<Budget> {
         private val fakeData = listOf(
+
             Budget(budgetId = 1, tripId = 1, category = "flight", amount = 45000.0, currency = "₽"),
             Budget(budgetId = 2, tripId = 1, category = "hotel", amount = 62000.0, currency = "₽"),
             Budget(budgetId = 3, tripId = 1, category = "food", amount = 18500.0, currency = "₽"),
@@ -54,8 +55,8 @@ class PreviewBudgetViewModel : BudgetViewModel(
             Budget(budgetId = 5, tripId = 1, category = "Подарки", amount = 5000.0, currency = "$")
         )
 
-        override fun getItemsByTripId(tripId: Long): Flow<List<Budget>> =
-            flowOf(fakeData)
+        override fun getItemsByTripId(tripId: Long): Flow<List<Budget>> = flowOf(emptyList())
+            //flowOf(fakeData)
 
         override suspend fun insertItem(item: Budget): Long = 0L
         override suspend fun updateItem(item: Budget) = Unit

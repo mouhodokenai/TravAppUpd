@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlin.collections.component1
@@ -27,7 +28,7 @@ open class HotelViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val totalNights: StateFlow<Int> = hotelItems
-        .map { list -> list.sumOf { nightsBetween(it.checkInDate, it.checkOutDate) } }
+        .map { list -> list.sumOf { nightsBetween(it.checkInDate!!, it.checkOutDate!!) } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
 
@@ -39,12 +40,10 @@ open class HotelViewModel @Inject constructor(
     }
 }
 
-fun nightsBetween(checkIn: String, checkOut: String): Int {
+fun nightsBetween(checkIn: LocalDate, checkOut: LocalDate): Int {
     return try {
-        val inDate = LocalDate.parse(checkIn)
-        val outDate = LocalDate.parse(checkOut)
-        ChronoUnit.DAYS.between(inDate, outDate).toInt()
-    } catch (e: Exception) {
+        ChronoUnit.DAYS.between(checkIn, checkOut).toInt()
+    } catch (     e: Exception) {
         -1
     }
 }
@@ -53,9 +52,14 @@ class PreviewHotelViewModel : HotelViewModel(
     hotelRepository = object : ItemRepository<Hotel> {
         private val fakeData = listOf(
             Hotel(
-                hotelId = 1, tripId = 1, name = "Grand Plaza",
-                address = "Via Roma, 12", checkInDate = "2026-08-01",
-                checkOutDate = "2026-08-05", checkInTime = "14:00", checkOutTime = "11:00"
+                hotelId = 1,
+                tripId = 1,
+                name = "Grand Plaza",
+                address = "Via Roma, 12",
+                checkInDate = LocalDate.of(2026, 8, 1),
+                checkOutDate = LocalDate.of(2026, 8, 5),
+                checkInTime = LocalTime.of(14, 0),
+                checkOutTime = LocalTime.of(11, 0)
             )
         )
 
