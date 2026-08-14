@@ -21,14 +21,16 @@ data class Route(
     @PrimaryKey
     @ColumnInfo(name = "route_id") val routeId: Long = generateLocalId(),
     @ColumnInfo(name = "trip_id") val tripId: Long,
-    val place: String,
+    val name: String,
+    val address: String? = null,
     val latitude: Double,
     val longitude: Double,
-    @ColumnInfo(name = "order_index") val orderIndex: Int? = null
+    @ColumnInfo(name = "order_index") val orderIndex: Int
 )
 
 data class RouteDraft(
-    val place: String,
+    val name: String,
+    val address: String,
     val latitude: Double,
     val longitude: Double,
     val orderIndex: Int? = null

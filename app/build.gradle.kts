@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.foundation)
     implementation(libs.androidx.core.i18n)
     implementation(libs.places)
+    implementation(libs.androidx.ui)
     debugImplementation(libs.androidx.ui.tooling)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
@@ -104,7 +105,14 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    ksp(libs.hilt.android.compiler)
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp.logging)
+
+    implementation(libs.reorderable)
+
+    implementation(libs.osmdroid)
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation("androidx.compose.material:material-icons-extended:1.6.8")

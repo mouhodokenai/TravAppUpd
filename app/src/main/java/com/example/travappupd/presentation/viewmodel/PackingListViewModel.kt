@@ -1,9 +1,8 @@
 package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.PackingList
-import com.example.travappupd.data.model.repository.ItemRepository
+import com.example.travappupd.data.repositories.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,8 +11,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.distinct
 
 

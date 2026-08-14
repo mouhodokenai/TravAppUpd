@@ -2,8 +2,7 @@ package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.travappupd.data.entities.Note
-import com.example.travappupd.data.model.repository.ItemRepository
-import com.example.travappupd.data.model.repository.NoteRepository
+import com.example.travappupd.data.repositories.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

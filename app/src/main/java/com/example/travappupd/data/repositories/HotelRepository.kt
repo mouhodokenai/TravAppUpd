@@ -2,7 +2,6 @@ package com.example.travappupd.data.repositories
 
 import com.example.travappupd.data.dao.HotelDao
 import com.example.travappupd.data.entities.Hotel
-import com.example.travappupd.data.model.repository.ItemRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

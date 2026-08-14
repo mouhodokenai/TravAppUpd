@@ -68,6 +68,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.travappupd.R
 import com.example.travappupd.data.entities.Note
+import com.example.travappupd.presentation.view.dop.NoteTitles
 import com.example.travappupd.presentation.viewmodel.NoteViewModel
 import com.example.travappupd.presentation.viewmodel.PreviewNoteViewModel
 import com.example.travappupd.ui.theme.ExtendedTheme
@@ -157,7 +158,8 @@ fun NoteScreen(
             ) {
                 HeaderSection(
                     "Заметки",
-                    "Добавьте необходимые записи о путешествии"
+                    "Добавьте необходимые записи о путешествии",
+                    0
                 )
             }
 

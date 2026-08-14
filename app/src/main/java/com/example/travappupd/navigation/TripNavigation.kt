@@ -1,6 +1,7 @@
 package com.example.travappupd.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,6 +25,7 @@ import com.example.travappupd.presentation.viewmodel.DraftViewModelFactory
 import com.example.travappupd.presentation.viewmodel.HotelViewModel
 import com.example.travappupd.presentation.viewmodel.NoteViewModel
 import com.example.travappupd.presentation.viewmodel.PackingListViewModel
+import com.example.travappupd.presentation.viewmodel.RouteViewModel
 import com.example.travappupd.presentation.viewmodel.TicketViewModel
 import com.example.travappupd.presentation.viewmodel.TripViewModel
 
@@ -43,11 +45,9 @@ fun TripNavigation() {
         }
 
         navigation(startDestination = "newTrip", route = "createTrip") {
-
             composable("newTrip") { backStackEntry ->
-                val parentEntry = remember(backStackEntry) {
-                    navController.getBackStackEntry("createTrip")
-                }
+                val parentEntry =
+                    remember(backStackEntry) { navController.getBackStackEntry("createTrip") }
                 val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
 
                 NewTripScreen(
@@ -62,6 +62,51 @@ fun TripNavigation() {
                     onNavigateToTicket = { navController.navigate("draftTicket") }
                 )
             }
+
+/*
+        navigation(
+            startDestination = "editTripForm/{tripId}",
+            route = "editTrip/{tripId}"
+        ) {
+            composable(
+                "editTripForm/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("editTrip/{tripId}")
+                }
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                val editViewModel: TripEditViewModel = hiltViewModel(parentEntry)
+                LaunchedEffect(tripId) { editViewModel.loadTrip(tripId) }
+
+                NewTripScreen(
+                    viewModel = editViewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToTrips = { type -> navController.navigate("plans/$type") },
+                    onNavigateToBudget = { navController.navigate("editBudget/$tripId") },
+                    onNavigateToHotel = { navController.navigate("editHotel/$tripId") },
+                    onNavigateToNote = { navController.navigate("editNote/$tripId") },
+                    onNavigateToPackingList = { navController.navigate("editPackingList/$tripId") },
+                    onNavigateToRoute = { navController.navigate("editRoute/$tripId") },
+                    onNavigateToTicket = { navController.navigate("editTicket/$tripId") }
+                )
+            }
+        }
+        */
+
+            composable(
+                "editBudget/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                BudgetScreen(
+                    tripId = tripId,
+                    onNavigateBack = { navController.popBackStack() }
+                    // viewModel = hiltViewModel() по умолчанию — реальный репозиторий
+                )
+            }
+            // ... editHotel, editNote, editPackingList, editRoute, editTicket аналогично
+        }
 
             composable("draftBudget") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
@@ -159,28 +204,27 @@ fun TripNavigation() {
                 )
             }
 
-            /*
-                                                composable("draftRoute") { backStackEntry ->
-                                                    val parentEntry = remember(backStackEntry) {
-                                                        navController.getBackStackEntry("createTrip")
-                                                    }
-                                                    val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
+            composable("draftRoute") { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("createTrip")
+                }
+                val tripViewModel: TripViewModel = hiltViewModel(parentEntry)
 
-                                                    val routeViewModel: RouteViewModel = viewModel(
-                                                        viewModelStoreOwner = parentEntry,
-                                                        key = "draftRouteViewModel",
-                                                        factory = DraftViewModelFactory { RouteViewModel(tripViewModel.routeRepository) }
-                                                    )
+                val routeViewModel: RouteViewModel = viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    key = "draftRouteViewModel",
+                    factory = DraftViewModelFactory { RouteViewModel(
+                        routeRepository = tripViewModel.routeRepository,
+                        geocodingRepository = tripViewModel.geocodingRepository
+                    ) }
+                )
 
-                                                    RouteScreen(
-                                                        onNavigateBack = { navController.popBackStack() }
-                                                    )
-                                                }
-
-
-                                                }
-                                            }
-                                    */
+                RouteScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    tripId = tripViewModel.tripId,
+                    viewModel = routeViewModel
+                )
+            }
 
             composable(
                 "budget/{id}",
@@ -229,9 +273,11 @@ fun TripNavigation() {
             composable(
                 "route/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.LongType })
-            ) {
+            ) {backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("id") ?: return@composable
                 RouteScreen(
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    tripId = tripId
                 )
             }
 
@@ -251,12 +297,13 @@ fun TripNavigation() {
                 TripsScreen(
                     type = type,
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToDetails = { id, tripName -> navController.navigate("details/$id/$tripName") }
+                    onNavigateToDetails = { id, _ -> navController.navigate("editTrip/$id") }
                 )
             }
         }
     }
-}
+
+
 
 
 

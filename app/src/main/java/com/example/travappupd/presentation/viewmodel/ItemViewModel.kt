@@ -2,9 +2,7 @@ package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.travappupd.data.entities.Hotel
-import com.example.travappupd.data.model.repository.ItemRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.travappupd.data.repositories.ItemRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 abstract class ItemViewModel<Item>(
     protected val repository: ItemRepository<Item>

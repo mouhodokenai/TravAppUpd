@@ -1,7 +1,6 @@
 package com.example.travappupd.presentation.view
 
 import android.annotation.SuppressLint
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,8 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,12 +27,9 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Hotel
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -53,13 +47,9 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -80,23 +70,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.travappupd.R
-import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.Hotel
-import com.example.travappupd.presentation.viewmodel.CurrencyTotal
+import com.example.travappupd.presentation.view.dop.DatePickerModal
+import com.example.travappupd.presentation.view.dop.TimePickerModal
 import com.example.travappupd.presentation.viewmodel.HotelViewModel
 import com.example.travappupd.presentation.viewmodel.PreviewHotelViewModel
 import com.example.travappupd.presentation.viewmodel.nightsBetween
 import com.example.travappupd.ui.theme.ExtendedTheme
 import com.example.travappupd.ui.theme.TravelAppTheme
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.Locale
-import kotlin.collections.forEach
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -184,7 +168,8 @@ fun HotelScreen(
                 ) {
                     HeaderSection(
                         "Отели",
-                        "Проживание во время поездки"
+                        "Проживание во время поездки",
+                        0
                     )
                 }
 

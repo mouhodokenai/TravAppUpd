@@ -167,7 +167,8 @@ fun PackingListScreen(
                 ) {
                     HeaderSection(
                         "Багаж",
-                        "Добавьте вещи, необходимые в путешествии"
+                        "Добавьте вещи, необходимые в путешествии",
+                        0
                     )
                 }
                 BaggageSummaryCard(

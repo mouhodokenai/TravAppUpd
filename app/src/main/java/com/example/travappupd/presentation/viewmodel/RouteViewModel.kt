@@ -1,119 +1,149 @@
 package com.example.travappupd.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travappupd.data.entities.Route
-import com.example.travappupd.data.model.repository.RouteRepository
+import com.example.travappupd.data.repositories.GeocodingRepository
+import com.example.travappupd.data.repositories.GeocodingResult
+import com.example.travappupd.data.repositories.ItemRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RouteViewModel(private val repository: RouteRepository) : ViewModel() {
+@HiltViewModel
+open class RouteViewModel @Inject constructor(
+    routeRepository: ItemRepository<Route>,
+    private val geocodingRepository: GeocodingRepository
+) : ItemViewModel<Route>(routeRepository) {
 
-    private val _selectedTripId = MutableStateFlow<Long?>(null)
-    val selectedTripId: StateFlow<Long?> = _selectedTripId.asStateFlow()
-    val routeItems: Flow<List<Route>> = _selectedTripId.flatMapLatest { tripId ->
-        if (tripId != null) {
-            repository.getItemsByTripId(tripId)
-        } else {
-            flowOf(emptyList())
+    val routeItems: StateFlow<List<Route>> = items
+        .map { list -> list.sortedBy { it.orderIndex } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _searchResults = MutableStateFlow<List<GeocodingResult>>(emptyList())
+    val searchResults: StateFlow<List<GeocodingResult>> = _searchResults.asStateFlow()
+
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
+
+    private var searchJob: Job? = null
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+        searchJob?.cancel()
+
+        if (query.isBlank()) {
+            _searchResults.value = emptyList()
+            return
+        }
+
+        searchJob = viewModelScope.launch {
+            delay(500) // debounce — не долбим Nominatim на каждую букву
+            _isSearching.value = true
+            _searchResults.value = geocodingRepository.search(query)
+            _isSearching.value = false
         }
     }
 
-    private val _routeItems = MutableStateFlow<List<Route>>(emptyList())
-
-    fun selectTrip(tripId: Long) {
-        _selectedTripId.value = tripId
+    fun clearSearch() {
+        searchJob?.cancel()
+        _searchQuery.value = ""
+        _searchResults.value = emptyList()
     }
 
-    /*
-    fun loadRoutes(tripId: Long) {
-            val routes = routeDao.getRoutesForTrip(tripId)
-            _routeItems.postValue(routes)
+
+    fun undoDelete() {
+        pendingDelete?.let { route ->
+            addItem(route.copy())
+            pendingDelete = null
         }
     }
-    */
 
-
-    fun addRoute(route: Route) {
+    fun addRoutePoint(name: String, address: String?, latitude: Double, longitude: Double) {
         viewModelScope.launch {
-            repository.insertItem(route)
+            val tripId = selectedTripId.value ?: return@launch
+            val nextIndex = (routeItems.value.maxOfOrNull { it.orderIndex } ?: -1) + 1
+            val route = Route(
+                tripId = tripId,
+                name = name,
+                address = address,
+                latitude = latitude,
+                longitude = longitude,
+                orderIndex = nextIndex
+            )
+            addItem(route)
         }
     }
 
-    fun updateRoute(route: Route) {
+    fun reorderItems(newOrder: List<Route>) {
         viewModelScope.launch {
-            repository.updateItem(route)
-        }
-    }
-
-    fun deleteRoute(route: Route) {
-        viewModelScope.launch {
-            repository.deleteItem(route)
-        }
-    }
-
-    /*
-    fun getRoute(id: Int) {
-        viewModelScope.launch {
-
-        }
-    }
-
-
-    fun moveRouteUp(index: Int, route: Route) {
-        viewModelScope.launch {
-            val routes = routeDao.getRoutesForTrip(route.tripId).toMutableList();
-            if (index > 0) {
-                Collections.swap(routes, index, index - 1)
-                routeDao.clearAllRoutesForTrip(route.tripId)
-                routeDao.insertAll(routes)
-                loadRoutes(route.tripId)
-            }
-        }
-    }
-
-    fun moveRoute(fromIndex: Int, toIndex: Int) {
-        val currentRoutes = routeItems.value?.toMutableList() ?: return
-        if (fromIndex in currentRoutes.indices && toIndex in currentRoutes.indices) {
-            val item = currentRoutes.removeAt(fromIndex)
-            currentRoutes.add(toIndex, item)
-
-            viewModelScope.launch {
-                currentRoutes.forEachIndexed { index, route ->
-                    if (route.orderIndex != index) {
-                        viewModelScope.launch {
-                            routeDao.update(route.copy(orderIndex = index))
-                        }
-                    }
+            newOrder.forEachIndexed { index, route ->
+                if (route.orderIndex != index) {
+                    updateItem(route.copy(orderIndex = index))
                 }
-                _routeItems.postValue(currentRoutes)
             }
         }
     }
+}
 
+class PreviewRouteViewModel : RouteViewModel(
+    routeRepository = object : ItemRepository<Route> {
+        private val fakeData = listOf(
+            Route(
+                routeId = 1, tripId = 1, name = "Колизей",
+                address = "Piazza del Colosseo, 1, Roma",
+                latitude = 41.8902, longitude = 12.4922,
+                orderIndex = 0
+            ),
+            Route(
+                routeId = 2, tripId = 1, name = "Пантеон",
+                address = "Piazza della Rotonda, Roma",
+                latitude = 41.8986, longitude = 12.4769,
+                orderIndex = 1
+            ),
+            Route(
+                routeId = 3, tripId = 1, name = "Фонтан Треви",
+                address = "Piazza di Trevi, Roma",
+                latitude = 41.9009, longitude = 12.4833,
+                orderIndex = 2
+            )
+        )
 
-    private fun reorderRoutes(tripId: Long) {
-        viewModelScope.launch {
-            val routes = routeDao.getRoutesForTrip(tripId)
-            val reordered = routes.mapIndexed { i, route -> route.copy(orderIndex = i) }
-            routeDao.clearAllRoutesForTrip(tripId)
-            routeDao.insertAll(reordered)
+        override fun getItemsByTripId(tripId: Long): Flow<List<Route>> = flowOf(emptyList())
+        override suspend fun insertItem(item: Route): Long = 0L
+        override suspend fun updateItem(item: Route) = Unit
+        override suspend fun deleteItem(item: Route) = Unit
+        override suspend fun deleteAllItems() {}
+    },
+
+    geocodingRepository = object : GeocodingRepository {
+        override suspend fun search(query: String): List<GeocodingResult> {
+            return if (query.isBlank()) {
+                emptyList()
+            } else {
+                listOf(
+                    GeocodingResult(
+                        name = "Тестовое место",
+                        address = "Тестовый адрес, $query",
+                        latitude = 41.9,
+                        longitude = 12.5
+                    )
+                )
+            }
         }
     }
-
-
-    fun selectPlace(route: Route) {
-        _selectedPlace.value = route
-    }
-
-    fun clearSelectedPlace() {
-        _selectedPlace.value = null
-    }
-*/
-
+) {
+    init { selectTrip(1L) }
 }

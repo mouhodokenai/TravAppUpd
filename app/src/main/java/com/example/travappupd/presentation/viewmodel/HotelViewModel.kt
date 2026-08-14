@@ -1,9 +1,8 @@
 package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.Hotel
-import com.example.travappupd.data.model.repository.ItemRepository
+import com.example.travappupd.data.repositories.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,8 +14,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 @HiltViewModel
 open class HotelViewModel @Inject constructor(

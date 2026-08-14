@@ -30,7 +30,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -44,16 +43,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.travappupd.R
+import com.example.travappupd.presentation.view.dop.DatePickerModal
 import com.example.travappupd.presentation.viewmodel.PreviewTripViewModel
 import com.example.travappupd.presentation.viewmodel.TripViewModel
 import com.example.travappupd.ui.theme.TravelAppTheme
-import java.text.SimpleDateFormat
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Date
 import java.util.Locale
 import com.example.travappupd.ui.theme.ExtendedTheme
 
@@ -68,7 +64,7 @@ fun NewTripScreen(
     onNavigateToPackingList: (Long) -> Unit,
     onNavigateToRoute: (Long) -> Unit,
     onNavigateToTicket: (Long) -> Unit,
-    viewModel: TripViewModel = hiltViewModel()
+    viewModel: TripViewModel
 ) {
     val context = LocalContext.current
 
@@ -154,7 +150,8 @@ fun NewTripScreen(
             item {
                 HeaderSection(
                     "Новая поездка",
-                    "Спланируйте ваше идеальное путешествие"
+                    "Спланируйте ваше идеальное путешествие",
+                    0
                 )
             }
 
@@ -195,20 +192,12 @@ fun NewTripScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    CategoryCard( //???
+                    CategoryCard(
                         icon = painterResource(R.drawable.location2),
                         title = "Маршрут",
                         subtitle = " ",
-                        color = Color(0xFF62B44B),
+                        color =  ExtendedTheme.colors.routeColor2,
                         onAdd = { onNavigateToRoute(tripId) }
-                    )
-
-                    CategoryCard(
-                        icon = painterResource(R.drawable.luggage2),
-                        title = "Багаж",
-                        subtitle = " ",
-                        color = ExtendedTheme.colors.baggageColor2,
-                        onAdd = { onNavigateToPackingList(tripId) }
                     )
 
                     CategoryCard(
@@ -223,7 +212,7 @@ fun NewTripScreen(
                         icon = painterResource(R.drawable.ticket),
                         title = "Билеты",
                         subtitle = " ",
-                        color = Color(0xFF8D63FF), //???
+                        color =  ExtendedTheme.colors.ticketColor2, //???
                         onAdd = { onNavigateToTicket(tripId) }
                     )
 
@@ -233,6 +222,14 @@ fun NewTripScreen(
                         subtitle = " ",
                         color = ExtendedTheme.colors.hotelColor2,
                         onAdd = { onNavigateToHotel(tripId) }
+                    )
+
+                    CategoryCard(
+                        icon = painterResource(R.drawable.luggage2),
+                        title = "Багаж",
+                        subtitle = " ",
+                        color = ExtendedTheme.colors.baggageColor2,
+                        onAdd = { onNavigateToPackingList(tripId) }
                     )
 
                     CategoryCard(

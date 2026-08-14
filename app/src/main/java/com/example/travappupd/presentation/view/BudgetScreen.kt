@@ -78,6 +78,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.travappupd.R
+import com.example.travappupd.presentation.view.dop.BudgetCategories
+import com.example.travappupd.presentation.view.dop.SUPPORTED_CURRENCIES
 import com.example.travappupd.presentation.viewmodel.BudgetViewModel
 import com.example.travappupd.presentation.viewmodel.CurrencyTotal
 import com.example.travappupd.presentation.viewmodel.PreviewBudgetViewModel
@@ -171,7 +173,8 @@ fun BudgetScreen(
                 ))) {
                     HeaderSection(
                         "Бюджет",
-                        "Планирование расходов поездки"
+                        "Планирование расходов поездки",
+                        0
                     )
                 }
 

@@ -1,15 +1,10 @@
-package com.example.travappupd.presentation.view
+package com.example.travappupd.presentation.view.dop
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Attractions
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Category
-import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Diamond
-import androidx.compose.material.icons.outlined.Hotel
-import androidx.compose.material.icons.outlined.LocalMovies
-import androidx.compose.material.icons.outlined.Restaurant
-import androidx.compose.material.icons.outlined.SecurityUpdateGood
 import androidx.compose.material.icons.outlined.SentimentDissatisfied
 import androidx.compose.material.icons.outlined.SentimentSatisfied
 import androidx.compose.material.icons.outlined.ShoppingBag

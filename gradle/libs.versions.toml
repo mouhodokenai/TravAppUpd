@@ -30,6 +30,12 @@ foundationLayoutVersion = "1.11.4"
 androidxFoundation = "1.11.4"
 coreI18nVersion = "1.0.0"
 placesVersion = "4.2.0"
+retrofit = "2.11.0"
+okhttp = "4.12.0"
+reorderable = "3.1.0"
+osmdroid = "6.1.20"
+uiVersion = "1.11.4"
+lifecycleRuntimeComposeVersion = "2.11.0"
 
 
 [libraries]
@@ -85,6 +91,17 @@ androidx-compose-foundation-layout = { group = "androidx.compose.foundation", na
 foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "androidxFoundation" }
 androidx-core-i18n = { group = "androidx.core", name = "core-i18n", version.ref = "coreI18nVersion" }
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "placesVersion" }
+
+# Retofit
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+
+reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
+
+osmdroid = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmdroid" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "uiVersion" }
+lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeComposeVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

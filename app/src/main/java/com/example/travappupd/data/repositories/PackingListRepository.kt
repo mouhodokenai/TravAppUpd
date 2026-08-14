@@ -2,9 +2,11 @@ package com.example.travappupd.data.model.repository
 
 import com.example.travappupd.data.dao.PackingListDao
 import com.example.travappupd.data.entities.PackingList
+import com.example.travappupd.data.repositories.ItemRepository
 import kotlinx.coroutines.flow.Flow
 
-class PackingListRepository(private val packingListDao: PackingListDao) : ItemRepository<PackingList> {
+class PackingListRepository(private val packingListDao: PackingListDao) :
+    ItemRepository<PackingList> {
 
     override fun getItemsByTripId(tripId: Long): Flow<List<PackingList>> {
         return packingListDao.getByTripId(tripId)

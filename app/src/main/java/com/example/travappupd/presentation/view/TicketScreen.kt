@@ -30,13 +30,11 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Category
-import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePickerDefaults.dateFormatter
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
@@ -74,12 +72,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.travappupd.R
 import com.example.travappupd.data.entities.Ticket
+import com.example.travappupd.presentation.view.dop.DatePickerModal
+import com.example.travappupd.presentation.view.dop.TicketTypes
+import com.example.travappupd.presentation.view.dop.TimePickerModal
 import com.example.travappupd.presentation.viewmodel.PreviewTicketViewModel
 import com.example.travappupd.presentation.viewmodel.TicketViewModel
 import com.example.travappupd.ui.theme.ExtendedTheme
@@ -105,8 +105,6 @@ fun TicketScreen(
     val sheetState = rememberModalBottomSheetState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
-
 
     fun deleteWithSnackbar(ticket: Ticket) {
         val typeLabel = TicketTypes.infoFor(ticket.transportType).label
@@ -176,7 +174,8 @@ fun TicketScreen(
                 ) {
                     HeaderSection(
                         "Билеты",
-                        "Ваши билеты на все виды транспорта"
+                        "Ваши билеты на все виды транспорта",
+                        0
                     )
                 }
                 if (ticketItems.isEmpty()) {

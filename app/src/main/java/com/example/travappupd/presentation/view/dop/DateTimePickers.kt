@@ -1,4 +1,4 @@
-package com.example.travappupd.presentation.view
+package com.example.travappupd.presentation.view.dop
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
@@ -11,14 +11,10 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.ZoneOffset
-import java.util.Date
-import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)

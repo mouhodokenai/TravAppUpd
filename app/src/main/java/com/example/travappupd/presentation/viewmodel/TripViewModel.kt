@@ -9,8 +9,6 @@ import com.example.travappupd.data.entities.PackingList
 import com.example.travappupd.data.entities.Route
 import com.example.travappupd.data.entities.Ticket
 import com.example.travappupd.data.entities.Trip
-import com.example.travappupd.data.model.repository.ItemRepository
-import com.example.travappupd.data.repositories.DraftTripRepository
 import com.example.travappupd.data.repositories.TripRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -23,13 +21,15 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 import com.example.travappupd.data.entities.generateLocalId
+import com.example.travappupd.data.repositories.GeocodingRepository
+import com.example.travappupd.data.repositories.GeocodingResult
 import com.example.travappupd.data.repositories.InMemoryItemRepository
-import kotlinx.coroutines.flow.update
 
 
 @HiltViewModel
 open class TripViewModel @Inject constructor(
-    private val repository: TripRepository
+    private val repository: TripRepository,
+    val geocodingRepository: GeocodingRepository
 ) : ViewModel() {
 
     val tripId: Long = generateLocalId()
@@ -58,9 +58,11 @@ open class TripViewModel @Inject constructor(
     val routeRepository = InMemoryItemRepository<Route>(
         getId = { it.routeId }, withId = { i, id -> i.copy(routeId = id) }, getTripId = { it.tripId }
     )
+
     val ticketRepository = InMemoryItemRepository<Ticket>(
         getId = { it.ticketId }, withId = { i, id -> i.copy(ticketId = id) }, getTripId = { it.tripId }
     )
+
 
     fun updateTripName(newName: String) { _tripName.value = newName }
     fun updateStartDate(newDate: LocalDate?) { _startDate.value = newDate }
@@ -87,7 +89,7 @@ open class TripViewModel @Inject constructor(
     }
 }
 
-class PreviewTripViewModel() : TripViewModel(
+class PreviewTripViewModel : TripViewModel(
     repository = object : TripRepository {
         override val allTrips = flowOf(
             listOf(
@@ -115,7 +117,9 @@ class PreviewTripViewModel() : TripViewModel(
             routes: List<Route>,
             tickets: List<Ticket>
         ) {
-
         }
+    },
+    geocodingRepository = object : GeocodingRepository {
+        override suspend fun search(query: String): List<GeocodingResult> = emptyList()
     }
 )

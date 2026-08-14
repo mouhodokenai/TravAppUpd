@@ -12,16 +12,22 @@ import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.Hotel
 import com.example.travappupd.data.entities.Note
 import com.example.travappupd.data.entities.PackingList
+import com.example.travappupd.data.entities.Route
 import com.example.travappupd.data.entities.Ticket
 import com.example.travappupd.data.repositories.BudgetRepository
-import com.example.travappupd.data.model.repository.ItemRepository
+import com.example.travappupd.data.repositories.ItemRepository
 import com.example.travappupd.data.model.repository.NoteRepository
 import com.example.travappupd.data.model.repository.PackingListRepository
 import com.example.travappupd.data.model.repository.TicketRepository
+import com.example.travappupd.data.remote.NominatimApi
 import com.example.travappupd.data.repositories.TripRepository
 import com.example.travappupd.data.repositories.DraftTripRepository
+import com.example.travappupd.data.repositories.GeocodingRepository
+import com.example.travappupd.data.repositories.GeocodingRepositoryImpl
 import com.example.travappupd.data.repositories.HotelRepository
+import com.example.travappupd.data.repositories.RouteRepository
 import com.example.travappupd.data.repositories.TripRepositoryImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -94,6 +100,22 @@ object RepositoryModule {
         ticketDao: TicketDao
     ): ItemRepository<Ticket> {
         return TicketRepository(ticketDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRouteRepository(
+        routeDao: RouteDao
+    ): ItemRepository<Route> {
+        return RouteRepository(routeDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeocodingRepository(
+        api: NominatimApi
+    ): GeocodingRepository {
+        return GeocodingRepositoryImpl(api)
     }
 
     @Provides

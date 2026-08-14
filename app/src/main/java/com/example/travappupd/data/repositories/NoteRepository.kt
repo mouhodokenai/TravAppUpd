@@ -2,6 +2,7 @@ package com.example.travappupd.data.model.repository
 
 import com.example.travappupd.data.dao.NoteDao
 import com.example.travappupd.data.entities.Note
+import com.example.travappupd.data.repositories.ItemRepository
 import kotlinx.coroutines.flow.Flow
 
 class NoteRepository(private val noteDao: NoteDao) : ItemRepository<Note> {

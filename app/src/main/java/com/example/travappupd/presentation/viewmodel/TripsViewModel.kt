@@ -1,6 +1,7 @@
 package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.travappupd.data.entities.Budget
 import com.example.travappupd.data.entities.Hotel
 import com.example.travappupd.data.entities.Note
@@ -12,8 +13,13 @@ import com.example.travappupd.data.repositories.TripRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,8 +27,23 @@ open class TripsViewModel @Inject constructor(
     private val repository: TripRepository
 ) : ViewModel() {
 
-    private val _trips = MutableStateFlow<List<Trip?>>(emptyList())
-    val trips: Flow<List<Trip>> = repository.allTrips
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    val trips: StateFlow<List<Trip>> = combine(
+        repository.allTrips,
+        _searchQuery
+    ) { allTrips, query ->
+        if (query.isBlank()) {
+            allTrips
+        } else {
+            allTrips.filter { it.title.contains(query, ignoreCase = true) }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
 
 }
 

@@ -1,7 +1,6 @@
 package com.example.travappupd.data.repositories
 
 import com.example.travappupd.data.entities.generateLocalId
-import com.example.travappupd.data.model.repository.ItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map

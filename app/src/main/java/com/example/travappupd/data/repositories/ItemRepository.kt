@@ -1,4 +1,4 @@
-package com.example.travappupd.data.model.repository
+package com.example.travappupd.data.repositories
 
 import kotlinx.coroutines.flow.Flow
 
