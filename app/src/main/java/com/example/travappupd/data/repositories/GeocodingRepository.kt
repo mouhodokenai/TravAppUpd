@@ -7,7 +7,8 @@ data class GeocodingResult(
     val name: String,
     val address: String,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val country: String? = null
 )
 
 interface GeocodingRepository {
@@ -26,7 +27,8 @@ class GeocodingRepositoryImpl @Inject constructor(
                     name = result.name ?: result.displayName.substringBefore(","),
                     address = result.displayName,
                     latitude = result.lat.toDoubleOrNull() ?: 0.0,
-                    longitude = result.lon.toDoubleOrNull() ?: 0.0
+                    longitude = result.lon.toDoubleOrNull() ?: 0.0,
+                    country = result.address?.country
                 )
             }
         } catch (e: Exception) {

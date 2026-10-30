@@ -104,9 +104,13 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideRouteRepository(
-        routeDao: RouteDao
-    ): ItemRepository<Route> {
+    fun provideRouteRepositoryConcrete(routeDao: RouteDao): RouteRepository {
+        return RouteRepository(routeDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRouteRepository(routeDao: RouteDao): ItemRepository<Route> {
         return RouteRepository(routeDao)
     }
 

@@ -2,6 +2,7 @@ package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.travappupd.data.entities.Route
+import com.example.travappupd.data.entities.generateLocalId
 import com.example.travappupd.data.repositories.GeocodingRepository
 import com.example.travappupd.data.repositories.GeocodingResult
 import com.example.travappupd.data.repositories.ItemRepository
@@ -50,7 +51,7 @@ open class RouteViewModel @Inject constructor(
         }
 
         searchJob = viewModelScope.launch {
-            delay(500) // debounce — не долбим Nominatim на каждую букву
+            delay(500)
             _isSearching.value = true
             _searchResults.value = geocodingRepository.search(query)
             _isSearching.value = false
@@ -65,13 +66,13 @@ open class RouteViewModel @Inject constructor(
 
 
     fun undoDelete() {
-        pendingDelete?.let { route ->
-            addItem(route.copy())
+        pendingDelete?.let { item ->
+            addItem(item.copy(routeId = generateLocalId()))
             pendingDelete = null
         }
     }
 
-    fun addRoutePoint(name: String, address: String?, latitude: Double, longitude: Double) {
+    fun addRoutePoint(name: String, address: String?, country: String?, latitude: Double, longitude: Double) {
         viewModelScope.launch {
             val tripId = selectedTripId.value ?: return@launch
             val nextIndex = (routeItems.value.maxOfOrNull { it.orderIndex } ?: -1) + 1
@@ -79,6 +80,7 @@ open class RouteViewModel @Inject constructor(
                 tripId = tripId,
                 name = name,
                 address = address,
+                country = country,
                 latitude = latitude,
                 longitude = longitude,
                 orderIndex = nextIndex
@@ -121,7 +123,7 @@ class PreviewRouteViewModel : RouteViewModel(
             )
         )
 
-        override fun getItemsByTripId(tripId: Long): Flow<List<Route>> = flowOf(emptyList())
+        override fun getItemsByTripId(tripId: Long): Flow<List<Route>> = flowOf(fakeData)
         override suspend fun insertItem(item: Route): Long = 0L
         override suspend fun updateItem(item: Route) = Unit
         override suspend fun deleteItem(item: Route) = Unit

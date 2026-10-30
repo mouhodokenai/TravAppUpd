@@ -2,6 +2,7 @@ package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.travappupd.data.entities.Hotel
+import com.example.travappupd.data.entities.generateLocalId
 import com.example.travappupd.data.repositories.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +32,7 @@ open class HotelViewModel @Inject constructor(
 
     fun undoDelete() {
         pendingDelete?.let { item ->
-            addItem(item.copy())
+            addItem(item.copy(hotelId = generateLocalId()))
             pendingDelete = null
         }
     }

@@ -2,6 +2,7 @@ package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.travappupd.data.entities.Ticket
+import com.example.travappupd.data.entities.generateLocalId
 import com.example.travappupd.data.repositories.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -25,8 +26,8 @@ open class TicketViewModel @Inject constructor(
 
 
     fun undoDelete() {
-        pendingDelete?.let { ticket ->
-            addItem(ticket.copy())
+        pendingDelete?.let { item ->
+            addItem(item.copy(ticketId = generateLocalId()))
             pendingDelete = null
         }
     }
@@ -50,7 +51,7 @@ class PreviewTicketViewModel : TicketViewModel(
             )
         )
 
-        override fun getItemsByTripId(tripId: Long): Flow<List<Ticket>> = flowOf(emptyList())
+        override fun getItemsByTripId(tripId: Long): Flow<List<Ticket>> = flowOf(fakeData)
         override suspend fun insertItem(item: Ticket): Long = 0L
         override suspend fun updateItem(item: Ticket) = Unit
         override suspend fun deleteItem(item: Ticket) = Unit

@@ -5,12 +5,15 @@ import com.example.travappupd.data.entities.Route
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class RouteRepository @Inject constructor(
+open class RouteRepository @Inject constructor(
     private val routeDao: RouteDao
 ) : ItemRepository<Route> {
 
     override fun getItemsByTripId(tripId: Long): Flow<List<Route>> =
         routeDao.getByTripId(tripId)
+
+    suspend fun countAllItems(): Int = routeDao.countAll()
+    suspend fun countDistinctCountries(): Int = routeDao.countDistinctCountries()
 
     override suspend fun insertItem(item: Route): Long {
         return routeDao.insert(item)

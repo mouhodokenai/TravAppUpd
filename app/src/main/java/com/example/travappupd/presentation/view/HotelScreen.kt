@@ -79,6 +79,7 @@ import com.example.travappupd.presentation.viewmodel.nightsBetween
 import com.example.travappupd.ui.theme.ExtendedTheme
 import com.example.travappupd.ui.theme.TravelAppTheme
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -201,7 +202,15 @@ fun HotelScreen(
                     }
                 } else {
                     LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                            .let {
+                                PaddingValues(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 4.dp,
+                                    bottom = 88.dp
+                                )
+                            },
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(hotelItems, key = { it.hotelId }) { hotel ->
@@ -406,8 +415,8 @@ fun HotelFormBottomSheet(
 
     var name by remember { mutableStateOf(editingHotel?.name ?: "") }
     var address by remember { mutableStateOf(editingHotel?.address ?: "") }
-    var checkInDate by remember { mutableStateOf(editingHotel?.checkInDate) }
-    var checkOutDate by remember { mutableStateOf(editingHotel?.checkOutDate) }
+    var checkInDate by remember { mutableStateOf(editingHotel?.checkInDate ?: LocalDate.now()) }
+    var checkOutDate by remember { mutableStateOf(editingHotel?.checkOutDate ?: LocalDate.now()) }
     var checkInTime by remember { mutableStateOf(editingHotel?.checkInTime ?: LocalTime.of(14, 0)) }
     var checkOutTime by remember { mutableStateOf(editingHotel?.checkOutTime ?: LocalTime.of(12, 0)) }
 

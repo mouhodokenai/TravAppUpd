@@ -32,6 +32,10 @@ class TripRepositoryImpl @Inject constructor(
 
     override val allTrips: Flow<List<Trip>> = tripDao.getAllTrips()
 
+    override val curTrips: Flow<List<Trip>> = tripDao.getCurTrips()
+
+    override val pastTrips: Flow<List<Trip>> = tripDao.getPastTrips()
+
     override fun getTripById(id: Long): Flow<Trip?> {
         return tripDao.getByTripId(id)
     }
@@ -74,5 +78,9 @@ class TripRepositoryImpl @Inject constructor(
             if (routes.isNotEmpty()) routeDao.insertAll(routes)
             if (tickets.isNotEmpty()) ticketDao.insertAll(tickets)
         }
+    }
+
+    override suspend fun countAllTrips(): Int {
+        return tripDao.countAll()
     }
 }

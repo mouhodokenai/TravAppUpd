@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.LocalMovies
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.SecurityUpdateGood
 import androidx.compose.material.icons.outlined.ShoppingBag
+import androidx.compose.material.icons.outlined.Tram
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -61,7 +62,7 @@ object BudgetCategories {
         BudgetCategoryInfo("flight", "Перелёт", Icons.Outlined.Flight, flightContainer, flightContent),
         BudgetCategoryInfo("hotel", "Проживание", Icons.Outlined.Hotel, hotelContainer, hotelContent),
         BudgetCategoryInfo("food", "Питание", Icons.Outlined.Restaurant, foodContainer, foodContent),
-        BudgetCategoryInfo("transport", "Транспорт", Icons.Outlined.Clear, transportContainer, transportContent),
+        BudgetCategoryInfo("transport", "Транспорт", Icons.Outlined.Tram, transportContainer, transportContent),
         BudgetCategoryInfo("entertainment", "Развлечения", Icons.Outlined.LocalMovies, entertainmentContainer, entertainmentContent),
         BudgetCategoryInfo("shopping", "Покупки", Icons.Outlined.ShoppingBag, shoppingContainer, shoppingContent),
         BudgetCategoryInfo("insurance", "Страховка", Icons.Outlined.SecurityUpdateGood, insuranceContainer, insuranceContent),

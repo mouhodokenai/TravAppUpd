@@ -35,10 +35,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.travappupd.ui.theme.TravelAppTheme
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.travappupd.R
 import com.example.travappupd.navigation.TripNavigation
+import com.example.travappupd.presentation.viewmodel.HotelViewModel
+import com.example.travappupd.presentation.viewmodel.MainScreenViewModel
+import com.example.travappupd.presentation.viewmodel.PreviewMainScreenViewModel
 import com.example.travappupd.ui.theme.ExtendedTheme
 import dagger.hilt.android.AndroidEntryPoint
+import android.annotation.SuppressLint
+import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.ContentPasteSearch
+import androidx.compose.runtime.collectAsState
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -56,64 +66,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     onNavigateToNewTrip: () -> Unit,
-    onNavigateToTrips: (String) -> Unit
+    onNavigateToTrips: (String) -> Unit,
+    viewModel: MainScreenViewModel = hiltViewModel()
 )
 {
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                containerColor = Color.White
-            ) {
+    val trips = viewModel.totalTripsCount.collectAsState().value
 
-                //TODO доделать панель навигации
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {},
-                    icon = {
-                        Icon(Icons.Outlined.Home, null)
-                    },
-                    label = {
-                        Text("Главная")
-                    }
-                )
+    val places = viewModel.totalPlacesCount.collectAsState().value
 
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {},
-                    icon = {
-                        Icon(Icons.Outlined.Clear, null)
-                    },
-                    label = {
-                        Text("???")
-                    }
-                )
+    val countries = viewModel.totalCountriesCount.collectAsState().value
 
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {},
-                    icon = {
-                        Icon(Icons.Outlined.Clear, null)
-                    },
-                    label = {
-                        Text("???")
-                    }
-                )
 
-                NavigationBarItem(
-                    selected = false,
-                    onClick = {},
-                    icon = {
-                        Icon(Icons.Outlined.Clear, null)
-                    },
-                    label = {
-                        Text("???")
-                    }
-                )
-
-            }
-        }
-    ) { padding ->
-
+    Scaffold() {
+        padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -193,7 +158,7 @@ fun MainScreen(
                     StatisticCard(
                         modifier = Modifier.weight(1f),
                         icon = painterResource(R.drawable.flag),
-                        number = "28",
+                        number = "$countries",
                         title = stringResource(R.string.country_stat),
                         subtitle = stringResource(R.string.visited_stat),
                         color = ExtendedTheme.colors.statCountryIconColor,
@@ -203,7 +168,7 @@ fun MainScreen(
                     StatisticCard(
                         modifier = Modifier.weight(1f),
                         icon = painterResource(R.drawable.location),
-                        number = "132",
+                        number = "$places",
                         title = stringResource(R.string.place_stat),
                         subtitle = stringResource(R.string.visited_stat),
                         color = ExtendedTheme.colors.statPlaceIconColor,
@@ -213,7 +178,7 @@ fun MainScreen(
                     StatisticCard(
                         modifier = Modifier.weight(1f),
                         icon = painterResource(R.drawable.luggage),
-                        number = "47",
+                        number = "$trips",
                         title = stringResource(R.string.trips_stat),
                         subtitle = stringResource(R.string.total_stat),
                         color = ExtendedTheme.colors.statTripIconColor,
@@ -239,7 +204,7 @@ fun MainScreen(
                 SecondaryCard(
                     title = stringResource(R.string.plans_main),
                     subtitle = stringResource(R.string.future),
-                    icon = Icons.Outlined.Clear,
+                    icon = Icons.Outlined.CalendarMonth,
                     onClick = { onNavigateToTrips("plan") }
                 )
 
@@ -248,7 +213,7 @@ fun MainScreen(
                 SecondaryCard(
                     title = stringResource(R.string.archive_main),
                     subtitle = stringResource(R.string.past),
-                    icon = Icons.Outlined.Clear,
+                    icon = Icons.Outlined.ContentPasteSearch,
                     onClick = { onNavigateToTrips("archive") }
                 )
             }
@@ -256,141 +221,141 @@ fun MainScreen(
     }
 }
 
-    @Composable
-    fun StatisticCard(
-        modifier: Modifier = Modifier,
-        icon: Painter,
-        number: String,
-        title: String,
-        subtitle: String,
-        color: Color,
-        containerColor: Color
+@Composable
+fun StatisticCard(
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    number: String,
+    title: String,
+    subtitle: String,
+    color: Color,
+    containerColor: Color
+) {
+
+    Card(
+        modifier = modifier.height(160.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor
+        )
     ) {
 
-        Card(
-            modifier = modifier.height(160.dp),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = containerColor
-            )
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(CircleShape)
-                        .background(color.copy(alpha = 0.15f)),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    Icon(
-                        painter  = icon,
-                        contentDescription = null,
-                        tint = color,
-                        modifier = Modifier.clip(RoundedCornerShape(10.dp))
-                    )
-                }
-
-                Column {
-                    Text(
-                        text = number,
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ExtendedTheme.colors.titleColor
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = title,
-                        fontWeight = FontWeight.SemiBold,
-                        color = ExtendedTheme.colors.titleColor
-                    )
-
-                    Text(
-                        text = subtitle,
-                        color = ExtendedTheme.colors.textColor
-                    )
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun MainActionCard(
-        title: String,
-        subtitle: String,
-        icon: ImageVector,
-        background: Color,
-        onClick: () -> Unit
-    ) {
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .clickable { onClick() },
-            shape = RoundedCornerShape(28.dp),
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
         ) {
 
-            Row(
+            Box(
                 modifier = Modifier
-                    .background(background)
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(color.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
             ) {
-
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = ExtendedTheme.colors.textColor,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(18.dp))
-
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-
-                    Text(
-                        text = title,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = subtitle,
-                        color = Color.White.copy(alpha = 0.9f)
-                    )
-                }
 
                 Icon(
-                    imageVector = Icons.Outlined.KeyboardArrowRight,
+                    painter  = icon,
                     contentDescription = null,
-                    tint = ExtendedTheme.colors.textColor
+                    tint = color,
+                    modifier = Modifier.clip(RoundedCornerShape(10.dp))
+                )
+            }
+
+            Column {
+                Text(
+                    text = number,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ExtendedTheme.colors.titleColor
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ExtendedTheme.colors.titleColor
+                )
+
+                Text(
+                    text = subtitle,
+                    color = ExtendedTheme.colors.textColor
                 )
             }
         }
     }
+}
+
+@Composable
+fun MainActionCard(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    background: Color,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(28.dp),
+    ) {
+
+        Row(
+            modifier = Modifier
+                .background(background)
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color.White),
+                contentAlignment = Alignment.Center
+            ) {
+
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = ExtendedTheme.colors.textColor,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(18.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+
+                Text(
+                    text = title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = subtitle,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+            }
+
+            Icon(
+                imageVector = Icons.Outlined.KeyboardArrowRight,
+                contentDescription = null,
+                tint = ExtendedTheme.colors.textColor
+            )
+        }
+    }
+}
 
 @Composable
 fun SecondaryCard(
@@ -462,13 +427,15 @@ fun SecondaryCard(
 }
 
 
-@Preview(showSystemUi = true)
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MainScreenPreview() {
     TravelAppTheme {
         MainScreen(
             onNavigateToNewTrip = { },
-            onNavigateToTrips = { }
+            onNavigateToTrips = { },
+            viewModel = PreviewMainScreenViewModel()
         )
     }
 }

@@ -23,6 +23,7 @@ data class Route(
     @ColumnInfo(name = "trip_id") val tripId: Long,
     val name: String,
     val address: String? = null,
+    val country: String? = null,
     val latitude: Double,
     val longitude: Double,
     @ColumnInfo(name = "order_index") val orderIndex: Int

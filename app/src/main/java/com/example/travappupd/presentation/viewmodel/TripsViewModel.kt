@@ -17,9 +17,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,9 +43,54 @@ open class TripsViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val curTrips: StateFlow<List<Trip>> = combine(
+        repository.curTrips,
+        _searchQuery
+    ) { allTrips, query ->
+        if (query.isBlank()) {
+            allTrips
+        } else {
+            allTrips.filter { it.title.contains(query, ignoreCase = true) }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val pastTrips: StateFlow<List<Trip>> = combine(
+        repository.pastTrips,
+        _searchQuery
+    ) { allTrips, query ->
+        if (query.isBlank()) {
+            allTrips
+        } else {
+            allTrips.filter { it.title.contains(query, ignoreCase = true) }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
     }
+
+    private var pendingDelete: Trip? = null
+
+    fun deleteWithUndo(trip: Trip) {
+        pendingDelete = trip
+        viewModelScope.launch {
+            repository.deleteTrip(trip)
+        }
+    }
+
+    fun undoDelete() {
+        pendingDelete?.let { trip ->
+            viewModelScope.launch {
+                repository.insertTrip(trip)
+            }
+            pendingDelete = null
+        }
+    }
+
+    fun clearPendingDelete() {
+        pendingDelete = null
+    }
+
 
 }
 
@@ -56,6 +103,9 @@ class PreviewTripsViewModel : TripsViewModel(
                 Trip(tripId = 3, title = "Лондон", startDate = null, endDate = null)
             )
         )
+        override val curTrips: Flow<List<Trip>> = allTrips
+
+        override val pastTrips: Flow<List<Trip>> = allTrips
 
         override fun getTripById(id: Long): Flow<Trip?> =
             allTrips.map { it.find { trip -> trip.tripId == id } }
@@ -76,5 +126,7 @@ class PreviewTripsViewModel : TripsViewModel(
             tickets: List<Ticket>
         ) {
         }
+
+        override suspend fun countAllTrips(): Int = allTrips.count()
     }
 )

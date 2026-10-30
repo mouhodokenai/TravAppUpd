@@ -14,12 +14,13 @@ import androidx.navigation.navArgument
 import com.example.travappupd.presentation.view.BudgetScreen
 import com.example.travappupd.presentation.view.HotelScreen
 import com.example.travappupd.presentation.view.MainScreen
-import com.example.travappupd.presentation.view.NewTripScreen
+import com.example.travappupd.presentation.view.trip.NewTripScreen
 import com.example.travappupd.presentation.view.NoteScreen
 import com.example.travappupd.presentation.view.PackingListScreen
 import com.example.travappupd.presentation.view.RouteScreen
 import com.example.travappupd.presentation.view.TicketScreen
 import com.example.travappupd.presentation.view.TripsScreen
+import com.example.travappupd.presentation.view.trip.TripDetailsScreen
 import com.example.travappupd.presentation.viewmodel.BudgetViewModel
 import com.example.travappupd.presentation.viewmodel.DraftViewModelFactory
 import com.example.travappupd.presentation.viewmodel.HotelViewModel
@@ -27,6 +28,7 @@ import com.example.travappupd.presentation.viewmodel.NoteViewModel
 import com.example.travappupd.presentation.viewmodel.PackingListViewModel
 import com.example.travappupd.presentation.viewmodel.RouteViewModel
 import com.example.travappupd.presentation.viewmodel.TicketViewModel
+import com.example.travappupd.presentation.viewmodel.TripDetailsViewModel
 import com.example.travappupd.presentation.viewmodel.TripViewModel
 
 @Composable
@@ -63,50 +65,7 @@ fun TripNavigation() {
                 )
             }
 
-/*
-        navigation(
-            startDestination = "editTripForm/{tripId}",
-            route = "editTrip/{tripId}"
-        ) {
-            composable(
-                "editTripForm/{tripId}",
-                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
-            ) { backStackEntry ->
-                val parentEntry = remember(backStackEntry) {
-                    navController.getBackStackEntry("editTrip/{tripId}")
-                }
-                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
-                val editViewModel: TripEditViewModel = hiltViewModel(parentEntry)
-                LaunchedEffect(tripId) { editViewModel.loadTrip(tripId) }
 
-                NewTripScreen(
-                    viewModel = editViewModel,
-                    onNavigateBack = { navController.popBackStack() },
-                    onNavigateToTrips = { type -> navController.navigate("plans/$type") },
-                    onNavigateToBudget = { navController.navigate("editBudget/$tripId") },
-                    onNavigateToHotel = { navController.navigate("editHotel/$tripId") },
-                    onNavigateToNote = { navController.navigate("editNote/$tripId") },
-                    onNavigateToPackingList = { navController.navigate("editPackingList/$tripId") },
-                    onNavigateToRoute = { navController.navigate("editRoute/$tripId") },
-                    onNavigateToTicket = { navController.navigate("editTicket/$tripId") }
-                )
-            }
-        }
-        */
-
-            composable(
-                "editBudget/{tripId}",
-                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
-            ) { backStackEntry ->
-                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
-                BudgetScreen(
-                    tripId = tripId,
-                    onNavigateBack = { navController.popBackStack() }
-                    // viewModel = hiltViewModel() по умолчанию — реальный репозиторий
-                )
-            }
-            // ... editHotel, editNote, editPackingList, editRoute, editTicket аналогично
-        }
 
             composable("draftBudget") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
@@ -213,10 +172,12 @@ fun TripNavigation() {
                 val routeViewModel: RouteViewModel = viewModel(
                     viewModelStoreOwner = parentEntry,
                     key = "draftRouteViewModel",
-                    factory = DraftViewModelFactory { RouteViewModel(
-                        routeRepository = tripViewModel.routeRepository,
-                        geocodingRepository = tripViewModel.geocodingRepository
-                    ) }
+                    factory = DraftViewModelFactory {
+                        RouteViewModel(
+                            routeRepository = tripViewModel.routeRepository,
+                            geocodingRepository = tripViewModel.geocodingRepository
+                        )
+                    }
                 )
 
                 RouteScreen(
@@ -240,7 +201,7 @@ fun TripNavigation() {
             composable(
                 "hotel/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.LongType })
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getLong("id") ?: return@composable
                 HotelScreen(
                     onNavigateBack = { navController.popBackStack() },
@@ -251,7 +212,7 @@ fun TripNavigation() {
             composable(
                 "note/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.LongType })
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getLong("id") ?: return@composable
                 NoteScreen(
                     onNavigateBack = { navController.popBackStack() },
@@ -262,7 +223,7 @@ fun TripNavigation() {
             composable(
                 "packingList/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.LongType })
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getLong("id") ?: return@composable
                 PackingListScreen(
                     onNavigateBack = { navController.popBackStack() },
@@ -273,7 +234,7 @@ fun TripNavigation() {
             composable(
                 "route/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.LongType })
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getLong("id") ?: return@composable
                 RouteScreen(
                     onNavigateBack = { navController.popBackStack() },
@@ -301,7 +262,104 @@ fun TripNavigation() {
                 )
             }
         }
+
+        navigation(
+            startDestination = "editTrip/{tripId}",
+            route = "tripDetails/{tripId}"
+        ) {
+            composable(
+                "editTrip/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("editTrip/{tripId}")
+                }
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                val editViewModel: TripDetailsViewModel = hiltViewModel(parentEntry)
+                LaunchedEffect(tripId) { editViewModel.loadTrip(tripId) }
+
+                TripDetailsScreen(
+                    tripId = tripId,
+                    viewModel = editViewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToTrips = { type -> navController.navigate("plans/$type") },
+                    onNavigateToBudget = { navController.navigate("editBudget/$tripId") },
+                    onNavigateToHotel = { navController.navigate("editHotel/$tripId") },
+                    onNavigateToNote = { navController.navigate("editNote/$tripId") },
+                    onNavigateToPackingList = { navController.navigate("editPackingList/$tripId") },
+                    onNavigateToRoute = { navController.navigate("editRoute/$tripId") },
+                    onNavigateToTicket = { navController.navigate("editTicket/$tripId") }
+                )
+            }
+
+            composable(
+                "editBudget/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                BudgetScreen(
+                    tripId = tripId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                "editHotel/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                HotelScreen(
+                    tripId = tripId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                "editTicket/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                TicketScreen(
+                    tripId = tripId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                "editNote/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                NoteScreen(
+                    tripId = tripId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                "editPackingList/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                PackingListScreen(
+                    tripId = tripId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                "editRoute/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getLong("tripId") ?: return@composable
+                RouteScreen(
+                    tripId = tripId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+        }
     }
+}
 
 
 

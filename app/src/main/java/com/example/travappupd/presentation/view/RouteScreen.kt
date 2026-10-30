@@ -84,7 +84,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -137,7 +136,7 @@ fun RouteScreen(
 
     var viewingRoute by remember { mutableStateOf<Route?>(null) }
     var showAddSheet by remember { mutableStateOf(false) }
-    var selectedTab by remember { mutableIntStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(1) }
 
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
@@ -308,7 +307,7 @@ fun RouteScreen(
                     viewModel.clearSearch()
                 },
                 onSelectResult = { result ->
-                    viewModel.addRoutePoint(result.name, result.address, result.latitude, result.longitude)
+                    viewModel.addRoutePoint(result.name, result.address, result.country, result.latitude, result.longitude)
                     showAddSheet = false
                     viewModel.clearSearch()
                 }
@@ -512,7 +511,12 @@ private fun RouteListContent(
 
     LazyColumn(
         state = lazyListState,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 4.dp,
+            bottom = 88.dp
+        ),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         itemsIndexed(localItems, key = { _, route -> route.routeId }) { index, route ->

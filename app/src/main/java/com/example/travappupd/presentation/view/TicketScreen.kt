@@ -75,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import java.time.format.DateTimeFormatter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.travappupd.R
 import com.example.travappupd.data.entities.Ticket
 import com.example.travappupd.presentation.view.dop.DatePickerModal
@@ -198,7 +199,12 @@ fun TicketScreen(
                     }
                 } else {
                     LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 4.dp,
+                            bottom = 88.dp
+                        ),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(ticketItems, key = { it.ticketId }) { ticket ->

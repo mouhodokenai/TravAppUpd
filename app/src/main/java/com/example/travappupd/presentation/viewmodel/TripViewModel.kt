@@ -87,6 +87,7 @@ open class TripViewModel @Inject constructor(
             )
         }
     }
+
 }
 
 class PreviewTripViewModel : TripViewModel(
@@ -98,6 +99,10 @@ class PreviewTripViewModel : TripViewModel(
                 Trip(tripId = 3, title = "Лондон", startDate = null, endDate = null)
             )
         )
+        override val curTrips: Flow<List<Trip>>
+            get() = TODO("Not yet implemented")
+        override val pastTrips: Flow<List<Trip>>
+            get() = TODO("Not yet implemented")
 
         override fun getTripById(id: Long): Flow<Trip?> =
             allTrips.map { it.find { trip -> trip.tripId == id } }
@@ -117,6 +122,10 @@ class PreviewTripViewModel : TripViewModel(
             routes: List<Route>,
             tickets: List<Ticket>
         ) {
+        }
+
+        override suspend fun countAllTrips(): Int {
+            return 2
         }
     },
     geocodingRepository = object : GeocodingRepository {

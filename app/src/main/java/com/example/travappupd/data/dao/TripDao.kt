@@ -24,6 +24,15 @@ interface TripDao {
     @Query("SELECT * FROM trip")
     fun getAllTrips(): Flow<List<Trip>>
 
+    @Query("SELECT * FROM trip WHERE end_date >= date('now')")
+    fun getCurTrips(): Flow<List<Trip>>
+
+    @Query("SELECT * FROM trip WHERE end_date < date('now')")
+    fun getPastTrips(): Flow<List<Trip>>
+
+    @Query("SELECT COUNT(*) FROM trip")
+    suspend fun countAll(): Int
+
     @Query("SELECT * FROM trip WHERE trip_id = :tripId")
     fun getByTripId(tripId: Long): Flow<Trip?>
 

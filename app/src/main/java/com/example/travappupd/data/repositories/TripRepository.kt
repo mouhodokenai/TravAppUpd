@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.Flow
 interface TripRepository {
     val allTrips: Flow<List<Trip>>
 
+    val curTrips: Flow<List<Trip>>
+
+    val pastTrips: Flow<List<Trip>>
+
     fun getTripById(id: Long): Flow<Trip?>
     suspend fun insertTrip(trip: Trip): Long
     suspend fun updateTrip(trip: Trip)
@@ -29,5 +33,6 @@ interface TripRepository {
         tickets: List<Ticket>
     )
 
+    suspend fun countAllTrips(): Int
 
 }

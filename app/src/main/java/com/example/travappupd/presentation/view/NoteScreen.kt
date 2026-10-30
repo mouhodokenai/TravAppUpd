@@ -116,115 +116,119 @@ fun NoteScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = null
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = { },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        editingNote = null
+                        showSheet = true
+                    },
+                    containerColor = ExtendedTheme.colors.noteColor
+                ) {
+                    Icon(Icons.Outlined.Add, contentDescription = null)
+                }
+            },
+
+
+            ) { padding ->
+
+            Column(modifier = Modifier.padding(padding)) {
+
+                Row(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            horizontal = 20.dp,
+                            vertical = 8.dp
+                        )
+                    )
+                ) {
+                    HeaderSection(
+                        "Заметки",
+                        "Добавьте необходимые записи о путешествии",
+                        0
+                    )
+                }
+
+                if (noteItems.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Пока нет записей. Добавьте первую, нажав на кнопку «+».",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = ExtendedTheme.colors.textColor,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 24.dp, vertical = 16.dp)
                         )
                     }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                editingNote = null
-                showSheet = true
-            },
-                containerColor = ExtendedTheme.colors.noteColor
-            ) {
-                Icon(Icons.Outlined.Add, contentDescription = null)
-            }
-        },
-
-
-    ) { padding ->
-
-        Column(modifier = Modifier.padding(padding)) {
-
-            Row(
-                modifier = Modifier.padding(
-                    PaddingValues(
-                        horizontal = 20.dp,
-                        vertical = 8.dp
-                    )
-                )
-            ) {
-                HeaderSection(
-                    "Заметки",
-                    "Добавьте необходимые записи о путешествии",
-                    0
-                )
-            }
-
-            if (noteItems.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Пока нет записей. Добавьте первую, нажав на кнопку «+».",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = ExtendedTheme.colors.textColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-                                shape = RoundedCornerShape(16.dp)
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 4.dp,
+                            bottom = 88.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(noteItems, key = { it.noteId }) { note ->
+                            NoteCard(
+                                note = note,
+                                onClick = {
+                                    editingNote = note
+                                    showSheet = true
+                                },
+                                onDelete = { deleteWithSnackbar(note) }
                             )
-                            .padding(horizontal = 24.dp, vertical = 16.dp)
-                    )
-                }
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(noteItems, key = { it.noteId }) { note ->
-                        NoteCard(
-                            note = note,
-                            onClick = {
-                                editingNote = note
-                                showSheet = true
-                            },
-                            onDelete = { deleteWithSnackbar(note) }
-                        )
+                        }
                     }
                 }
             }
         }
-    }
-    }
 
-    if (showSheet) {
-        NoteFormBottomSheet(
-            sheetState = sheetState,
-            tripId = tripId,
-            editingNote = editingNote,
-            onDismiss = { showSheet = false },
-            onSave = { note ->
-                if (editingNote != null) {
-                    viewModel.updateItem(note)
-                } else {
-                    viewModel.addItem(note)
-                }
-                showSheet = false
+        if (showSheet) {
+            NoteFormBottomSheet(
+                sheetState = sheetState,
+                tripId = tripId,
+                editingNote = editingNote,
+                onDismiss = { showSheet = false },
+                onSave = { note ->
+                    if (editingNote != null) {
+                        viewModel.updateItem(note)
+                    } else {
+                        viewModel.addItem(note)
+                    }
+                    showSheet = false
 
-            },
-            onDelete = { note ->
-                showSheet = false
-                deleteWithSnackbar(note)
-            },
-            existingCustomTitles = noteItems.map { it.title },
-        )
+                },
+                onDelete = { note ->
+                    showSheet = false
+                    deleteWithSnackbar(note)
+                },
+                existingCustomTitles = noteItems.map { it.title },
+            )
+        }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -264,7 +268,7 @@ fun NoteCard(
                 }
             ) {
                 Icon(
-                    imageVector = titleInfo.icon,
+                    imageVector = Icons.Outlined.Delete,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )

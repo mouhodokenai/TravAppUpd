@@ -2,6 +2,7 @@ package com.example.travappupd.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.travappupd.data.entities.Budget
+import com.example.travappupd.data.entities.generateLocalId
 import com.example.travappupd.data.repositories.ItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +37,7 @@ open class BudgetViewModel @Inject constructor(
 
     fun undoDelete() {
         pendingDelete?.let { item ->
-            addItem(item.copy())
+            addItem(item.copy(budgetId = generateLocalId()))
             pendingDelete = null
         }
     }
@@ -52,11 +53,15 @@ class PreviewBudgetViewModel : BudgetViewModel(
             Budget(budgetId = 2, tripId = 1, category = "hotel", amount = 62000.0, currency = "₽"),
             Budget(budgetId = 3, tripId = 1, category = "food", amount = 18500.0, currency = "₽"),
             Budget(budgetId = 4, tripId = 1, category = "transport", amount = 12000.0, currency = "₽"),
+            Budget(budgetId = 6, tripId = 1, category = "flight", amount = 45000.0, currency = "₽"),
+            Budget(budgetId = 7, tripId = 1, category = "hotel", amount = 62000.0, currency = "₽"),
+            Budget(budgetId = 8, tripId = 1, category = "food", amount = 18500.0, currency = "₽"),
+            Budget(budgetId = 9, tripId = 1, category = "transport", amount = 12000.0, currency = "₽"),
             Budget(budgetId = 5, tripId = 1, category = "Подарки", amount = 5000.0, currency = "$")
         )
 
-        override fun getItemsByTripId(tripId: Long): Flow<List<Budget>> = flowOf(emptyList())
-            //flowOf(fakeData)
+        override fun getItemsByTripId(tripId: Long): Flow<List<Budget>> = //flowOf(emptyList())
+            flowOf(fakeData)
 
         override suspend fun insertItem(item: Budget): Long = 0L
         override suspend fun updateItem(item: Budget) = Unit

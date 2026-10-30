@@ -11,6 +11,8 @@ interface NominatimApi {
         @Query("q") query: String,
         @Query("format") format: String = "json",
         @Query("limit") limit: Int = 5,
+        @Query("accept-language") language: String = "ru",
+        @Query("addressdetails") addressDetails: Int = 1,
         @Header("User-Agent") userAgent: String = "TravAppUpd/1.0 (student project)"
     ): List<NominatimResult>
 }
