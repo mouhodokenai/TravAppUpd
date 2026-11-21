@@ -13,6 +13,8 @@ open class RouteRepository @Inject constructor(
         routeDao.getByTripId(tripId)
 
     suspend fun countAllItems(): Int = routeDao.countAll()
+
+    suspend fun countPastItems(): Int = routeDao.countPast()
     suspend fun countDistinctCountries(): Int = routeDao.countDistinctCountries()
 
     override suspend fun insertItem(item: Route): Long {

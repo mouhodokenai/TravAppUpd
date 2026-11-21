@@ -6,7 +6,7 @@
     <string name="visited_stat">посещено</string>
     <string name="place_stat">Мест</string>
     <string name="trips_stat">Поездок</string>
-    <string name="total_stat">всего</string>
+    <string name="total_stat">совершено</string>
     <string name="new_trip">Новое путешествие</string>
     <string name="add_trip">Добавить поездку</string>
     <string name="plans_main">Мои планы</string>

@@ -348,11 +348,13 @@ fun MainActionCard(
                 )
             }
 
+            /*
             Icon(
                 imageVector = Icons.Outlined.KeyboardArrowRight,
                 contentDescription = null,
                 tint = ExtendedTheme.colors.textColor
             )
+             */
         }
     }
 }
@@ -416,12 +418,13 @@ fun SecondaryCard(
                     color = Color.White
                 )
             }
-
+/*
             Icon(
                 imageVector = Icons.Outlined.KeyboardArrowRight,
                 contentDescription = null,
                 tint = Color.Gray
             )
+            */
         }
     }
 }

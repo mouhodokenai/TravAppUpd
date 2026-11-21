@@ -51,8 +51,8 @@ open class MainScreenViewModel @Inject constructor(
 
     private fun loadStats() {
         viewModelScope.launch {
-            _totalTripsCount.value = tripRepository.countAllTrips()
-            _totalPlacesCount.value = routeRepository.countAllItems()
+            _totalTripsCount.value = tripRepository.countPastTrips()
+            _totalPlacesCount.value = routeRepository.countPastItems()
             _totalCountriesCount.value = routeRepository.countDistinctCountries()
         }
     }
@@ -94,7 +94,8 @@ class PreviewMainScreenViewModel : MainScreenViewModel(
         ) {
         }
 
-        override suspend fun countAllTrips(): Int = 2
+        override suspend fun countAllTrips(): Int = 3
+        override suspend fun countPastTrips(): Int = 2
     },
     routeRepository = RouteRepository(
         routeDao = object : RouteDao {
@@ -134,6 +135,7 @@ class PreviewMainScreenViewModel : MainScreenViewModel(
             override fun getAll(): Flow<List<Route>> = flowOf(fakeData)
 
             override suspend fun countAll(): Int = fakeData.size
+            override suspend fun countPast(): Int = 3
 
             override suspend fun getMaxOrderIndex(tripId: Long): Int = 1
 

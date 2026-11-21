@@ -55,7 +55,12 @@ fun TripNavigation() {
                 NewTripScreen(
                     viewModel = tripViewModel,
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToTrips = { type -> navController.navigate("plans/$type") },
+                    onNavigateToTrips = { type ->
+                        navController.navigate("plans/$type") {
+                            popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
                     onNavigateToBudget = { navController.navigate("draftBudget") },
                     onNavigateToHotel = { navController.navigate("draftHotel") },
                     onNavigateToNote = { navController.navigate("draftNote") },
@@ -64,8 +69,6 @@ fun TripNavigation() {
                     onNavigateToTicket = { navController.navigate("draftTicket") }
                 )
             }
-
-
 
             composable("draftBudget") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
@@ -85,7 +88,6 @@ fun TripNavigation() {
                     viewModel = budgetViewModel
                 )
             }
-
 
             composable("draftHotel") { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
@@ -282,7 +284,12 @@ fun TripNavigation() {
                     tripId = tripId,
                     viewModel = editViewModel,
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToTrips = { type -> navController.navigate("plans/$type") },
+                    onNavigateToTrips = { type ->
+                        navController.navigate("plans/$type") {
+                            popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
                     onNavigateToBudget = { navController.navigate("editBudget/$tripId") },
                     onNavigateToHotel = { navController.navigate("editHotel/$tripId") },
                     onNavigateToNote = { navController.navigate("editNote/$tripId") },

@@ -31,13 +31,16 @@ interface RouteDao {
     @Query("SELECT COUNT(*) FROM route")
     suspend fun countAll(): Int
 
+    @Query("SELECT COUNT(*) FROM route WHERE trip_id IN (SELECT trip_id FROM trip WHERE end_date < date('now', 'localtime'))")
+    suspend fun countPast(): Int
+
     @Query("SELECT COALESCE(MAX(order_index), -1) FROM route WHERE trip_id = :tripId")
     suspend fun getMaxOrderIndex(tripId: Long): Int
 
     @Query("DELETE FROM route")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(DISTINCT country) FROM route WHERE country IS NOT NULL")
+    @Query("SELECT COUNT(DISTINCT country) FROM route WHERE country IS NOT NULL AND trip_id IN (SELECT trip_id FROM trip WHERE end_date < date('now', 'localtime'))")
     suspend fun countDistinctCountries(): Int
 }
 

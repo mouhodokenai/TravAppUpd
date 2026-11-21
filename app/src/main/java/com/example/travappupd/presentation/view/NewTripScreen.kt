@@ -40,7 +40,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.travappupd.R
 import com.example.travappupd.presentation.view.dop.DatePickerModal
@@ -107,24 +106,15 @@ fun NewTripScreen(
                             contentDescription = null
                         )
                     }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Outlined.Clear,
-                            contentDescription = null
-                        )
-                    }
                 }
             )
         }
-
         ,
         bottomBar = {
             BottomCreateButton(
                 onSave = {
                     if (ChronoUnit.DAYS.between(startDate, endDate) > 0) {
-                        viewModel.saveTrip()
+                        viewModel.saveTrip(onSaved = { onNavigateToTrips("plan") })
                         onNavigateToTrips("plan")
                     }
                     else Toast.makeText(context, "Ошибка при выборе даты", Toast.LENGTH_SHORT).show()

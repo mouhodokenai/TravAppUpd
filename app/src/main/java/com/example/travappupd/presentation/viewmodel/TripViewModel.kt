@@ -68,7 +68,7 @@ open class TripViewModel @Inject constructor(
     fun updateStartDate(newDate: LocalDate?) { _startDate.value = newDate }
     fun updateEndDate(newDate: LocalDate?) { _endDate.value = newDate }
 
-    fun saveTrip() {
+    fun saveTrip(onSaved: () -> Unit) {
         viewModelScope.launch {
             val trip = Trip(
                 tripId = tripId,
@@ -85,6 +85,8 @@ open class TripViewModel @Inject constructor(
                 routes = routeRepository.getAllItems(),
                 tickets = ticketRepository.getAllItems()
             )
+
+            onSaved()
         }
     }
 

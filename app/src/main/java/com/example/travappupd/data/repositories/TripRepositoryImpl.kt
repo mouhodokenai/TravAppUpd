@@ -83,4 +83,8 @@ class TripRepositoryImpl @Inject constructor(
     override suspend fun countAllTrips(): Int {
         return tripDao.countAll()
     }
+
+    override suspend fun countPastTrips(): Int {
+        return tripDao.countPast()
+    }
 }

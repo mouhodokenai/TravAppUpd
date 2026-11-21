@@ -35,4 +35,6 @@ interface TripRepository {
 
     suspend fun countAllTrips(): Int
 
+    suspend fun countPastTrips(): Int
+
 }
